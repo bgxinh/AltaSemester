@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\Interface\" />
     <Folder Include="Dtos\" />
   </ItemGroup>
 

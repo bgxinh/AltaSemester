@@ -10,7 +10,7 @@ namespace AltaSemester.Data.Entities
     {
         public int ServiceId { get; set; }
         public int DeviceId {  get; set; }
-        public Device Device { get; set; }
-        public Service Service { get; set; }
+        public Device? Device { get; set; }
+        public Service? Service { get; set; }
     }
 }

@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Data.Entities
 {
-    public class Role
+    public class Permission
     {
         public int Id { get; set; }
-        public Roles RoleName { get; set; }
-        public string RoleDesciption { get; set; }
-        public virtual ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
+        public GroupPermisson GroupPermission { get; set; }
+        public string PermissionName {  get; set; }
         public virtual ICollection<RolePermission>? RolePermissions { get; set; } = new List<RolePermission>();
     }
 }

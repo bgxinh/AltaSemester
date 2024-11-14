@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using AltaSemester.Data.Abstractions.Interface;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Data.Entities
 {
-    public class User
+    public class User : IAccountStatus
     {
         [Key]
         public int Id { get; set; }
@@ -17,6 +18,8 @@ namespace AltaSemester.Data.Entities
         public string Password { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new HashSet<UserRole>();
+        public bool? Status { get; set; }
+        public virtual ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<ServiceTicket>? ServiceTickets { get; set; } = new List<ServiceTicket>();
     }
 }

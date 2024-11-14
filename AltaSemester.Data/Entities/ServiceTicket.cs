@@ -16,5 +16,11 @@ namespace AltaSemester.Data.Entities
         public DateTime ExpiredAt { get; set; }
         public TicketStatus Status { get; set; }
         public string DeviceName { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+        public int DeviceId { get; set; }
+        public Device Device { get; set; }
+        public int ServiceId { get; set; }
+        public Service Service { get; set; }
     }
 }
