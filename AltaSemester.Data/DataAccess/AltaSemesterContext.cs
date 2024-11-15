@@ -22,6 +22,7 @@ namespace AltaSemester.Data.DataAccess
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<ServiceTicket> ServiceTickets { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,6 +93,9 @@ namespace AltaSemester.Data.DataAccess
                 .WithMany(x => x.ServiceTickets)
                 .HasForeignKey(x => x.DeviceId)
                 .OnDelete(DeleteBehavior.Cascade);
+            //Bảng actitvityLog
+            modelBuilder.Entity<ActivityLog>()
+                .HasKey(x => x.Id);
         }
     }
 }

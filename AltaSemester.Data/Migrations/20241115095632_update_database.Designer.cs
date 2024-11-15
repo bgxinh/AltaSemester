@@ -3,6 +3,7 @@ using System;
 using AltaSemester.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AltaSemester.Data.Migrations
 {
     [DbContext(typeof(AltaSemesterContext))]
-    partial class AltaSemesterContextModelSnapshot : ModelSnapshot
+    [Migration("20241115095632_update_database")]
+    partial class update_database
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,31 +24,6 @@ namespace AltaSemester.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AltaSemester.Data.Entities.ActivityLog", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ActionsTaken")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ActiveSessionTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IP")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActivityLogs");
-                });
-
             modelBuilder.Entity("AltaSemester.Data.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
@@ -54,9 +31,6 @@ namespace AltaSemester.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeviceCode")
                         .IsRequired()
@@ -255,9 +229,6 @@ namespace AltaSemester.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
