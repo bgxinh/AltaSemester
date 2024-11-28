@@ -16,7 +16,7 @@ namespace AltaSemester.Data.Entities
         public string? Prefix { get; set; } = string.Empty;
         public string? Surfix { get; set; } = string.Empty ;
         public bool? Status { get; set; }
-        public virtual ICollection<DeviceService>? DeviceServices { get; set; } = new List<DeviceService>();
-        public virtual ICollection<ServiceTicket>? ServiceTickets { get; set; } = new List<ServiceTicket>();
+        public virtual ICollection<DeviceService> DeviceServices { get; set; } = new List<DeviceService>();
+        public virtual ICollection<ServiceTicket> ServiceTickets { get; set; } = new List<ServiceTicket>();
     }
 }

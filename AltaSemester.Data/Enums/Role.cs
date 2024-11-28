@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Data.Enums
 {
-    public enum Roles
+    public enum Role
     {
-        Admin,
-        Superadmin,
-        Accountant,
-        Manager,
-        Receptionist,
-        Doctor
+        Admin = 0,
+        Superadmin = 1,
+        Accountant = 2,
+        Manager = 3,
+        Receptionist = 4,
+        Doctor = 5
     }
 }

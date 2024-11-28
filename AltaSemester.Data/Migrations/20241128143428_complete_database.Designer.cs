@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AltaSemester.Data.Migrations
 {
     [DbContext(typeof(AltaSemesterContext))]
-    [Migration("20241115100747_last_update_database")]
-    partial class last_update_database
+    [Migration("20241128143428_complete_database")]
+    partial class complete_database
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -142,11 +142,11 @@ namespace AltaSemester.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("RoleDesciption")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoleName")
-                        .HasColumnType("integer");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -265,9 +265,15 @@ namespace AltaSemester.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool?>("IsEmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -275,6 +281,9 @@ namespace AltaSemester.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshToken")
                         .HasColumnType("text");
 
                     b.Property<bool?>("Status")

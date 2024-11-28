@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AltaSemester.Data.DataAccess;
+using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.AuthDtos;
+using AltaSemester.Service.Cores.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AltaSemester.Controllers
 {
@@ -7,6 +12,30 @@ namespace AltaSemester.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-
+        private readonly IAuth _auth;
+        private ModelResult _result;
+        public AuthController(IAuth auth )
+        {
+            _auth = auth;
+            _result = new ModelResult();
+        }
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] RegisterDto registerDto)
+        {
+            _result = await _auth.Register(registerDto);
+            return Ok(_result);
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            _result = await _auth.Login(loginDto);
+            return Ok(_result);
+        }
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshDto refreshDto)
+        {
+            _result = await _auth.Refresh(refreshDto);
+            return Ok(_result);
+        }
     }
 }

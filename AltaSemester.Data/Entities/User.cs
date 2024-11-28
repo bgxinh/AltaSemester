@@ -18,9 +18,12 @@ namespace AltaSemester.Data.Entities
         public string Password { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? ExpiredAt { get; set; }
+        public bool? IsEmailConfirmed { get; set; }
         public bool? Status { get; set; }
         public DateTime? CreateAt { get; set; }
-        public virtual ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
-        public virtual ICollection<ServiceTicket>? ServiceTickets { get; set; } = new List<ServiceTicket>();
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<ServiceTicket> ServiceTickets { get; set; } = new List<ServiceTicket>();
     }
 }

@@ -14,7 +14,7 @@ namespace AltaSemester.Data.DataAccess
     {
         public AltaSemesterContext(DbContextOptions<AltaSemesterContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<Entities.Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Device> Devices { get; set; }
@@ -23,13 +23,12 @@ namespace AltaSemester.Data.DataAccess
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<ServiceTicket> ServiceTickets { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Định nghĩa quan hệ giữa User và Role
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<Entities.Role>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<UserRole>()
                 .HasKey(x => new {x.UserId, x.RoleId});

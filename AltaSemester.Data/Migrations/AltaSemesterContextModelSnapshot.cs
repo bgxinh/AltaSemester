@@ -140,11 +140,11 @@ namespace AltaSemester.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("RoleDesciption")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoleName")
-                        .HasColumnType("integer");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -263,9 +263,15 @@ namespace AltaSemester.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool?>("IsEmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -273,6 +279,9 @@ namespace AltaSemester.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshToken")
                         .HasColumnType("text");
 
                     b.Property<bool?>("Status")

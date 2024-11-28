@@ -20,7 +20,7 @@ namespace AltaSemester.Data.Entities
         public bool? Status { get; set; }
         public bool? StatusConnect {  get; set; }
         public DateTime? CreateAt { get; set; }
-        public virtual ICollection<DeviceService>? DeviceServices { get; set; } = new List<DeviceService>();
-        public virtual ICollection<ServiceTicket>? ServiceTickets { get; set; } = new List<ServiceTicket>();
+        public virtual ICollection<DeviceService> DeviceServices { get; set; } = new List<DeviceService>();
+        public virtual ICollection<ServiceTicket> ServiceTickets { get; set; } = new List<ServiceTicket>();
     }
 }

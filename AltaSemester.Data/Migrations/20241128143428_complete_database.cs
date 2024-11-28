@@ -6,10 +6,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AltaSemester.Data.Migrations
 {
-    public partial class AltaSemester_Design_Database : Migration
+    public partial class complete_database : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ActivityLogs",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    ActiveSessionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IP = table.Column<string>(type: "text", nullable: false),
+                    ActionsTaken = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityLogs", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Devices",
                 columns: table => new
@@ -24,7 +39,8 @@ namespace AltaSemester.Data.Migrations
                     DeviceIP = table.Column<string>(type: "text", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: true),
                     Status = table.Column<bool>(type: "boolean", nullable: true),
-                    StatusConnect = table.Column<bool>(type: "boolean", nullable: true)
+                    StatusConnect = table.Column<bool>(type: "boolean", nullable: true),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,8 +67,8 @@ namespace AltaSemester.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleName = table.Column<int>(type: "integer", nullable: false),
-                    RoleDesciption = table.Column<string>(type: "text", nullable: false)
+                    RoleName = table.Column<string>(type: "text", nullable: false),
+                    RoleDesciption = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,7 +104,11 @@ namespace AltaSemester.Data.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<bool>(type: "boolean", nullable: true)
+                    RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    ExpiredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsEmailConfirmed = table.Column<bool>(type: "boolean", nullable: true),
+                    Status = table.Column<bool>(type: "boolean", nullable: true),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -239,6 +259,9 @@ namespace AltaSemester.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActivityLogs");
+
             migrationBuilder.DropTable(
                 name: "DevicesServices");
 

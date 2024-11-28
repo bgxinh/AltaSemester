@@ -12,6 +12,6 @@ namespace AltaSemester.Data.Entities
         public int Id { get; set; }
         public GroupPermisson GroupPermission { get; set; }
         public string PermissionName {  get; set; }
-        public virtual ICollection<RolePermission>? RolePermissions { get; set; } = new List<RolePermission>();
+        public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }
