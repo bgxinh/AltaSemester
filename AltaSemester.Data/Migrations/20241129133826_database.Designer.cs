@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AltaSemester.Data.Migrations
 {
     [DbContext(typeof(AltaSemesterContext))]
-    [Migration("20241128143428_complete_database")]
-    partial class complete_database
+    [Migration("20241129133826_database")]
+    partial class database
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -270,6 +270,9 @@ namespace AltaSemester.Data.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("HashedEmail")
                         .HasColumnType("text");
 
                     b.Property<bool?>("IsEmailConfirmed")

@@ -10,5 +10,6 @@ namespace AltaSemester.Service.Cores.Interface
     public interface IEmailService
     {
         Task<ModelResult> SendMailActiveAccount(string email, string hashEmail);
+        Task<ModelResult> SendEmailResetPassword(string email, string password);
     }
 }

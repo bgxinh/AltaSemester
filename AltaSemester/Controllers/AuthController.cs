@@ -2,6 +2,7 @@
 using AltaSemester.Data.Dtos;
 using AltaSemester.Data.Dtos.AuthDtos;
 using AltaSemester.Service.Cores.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,18 @@ namespace AltaSemester.Controllers
         public async Task<IActionResult> Refresh([FromBody] RefreshDto refreshDto)
         {
             _result = await _auth.Refresh(refreshDto);
+            return Ok(_result);
+        }
+        [HttpGet("verify/{hashedEmail}")]
+        public async Task<IActionResult> Verify(string hashedEmail)
+        {
+            _result = await _auth.EmailConfirm(hashedEmail);
+            return Ok(_result);
+        }
+        [HttpPost("reset")]
+        public async Task<IActionResult> Reset([FromBody] string email)
+        {
+            _result = await _auth.ResetPassword(email);
             return Ok(_result);
         }
     }

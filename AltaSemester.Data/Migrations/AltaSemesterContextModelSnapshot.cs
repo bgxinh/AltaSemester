@@ -270,6 +270,9 @@ namespace AltaSemester.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("HashedEmail")
+                        .HasColumnType("text");
+
                     b.Property<bool?>("IsEmailConfirmed")
                         .HasColumnType("boolean");
 

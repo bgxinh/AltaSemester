@@ -14,5 +14,6 @@ namespace AltaSemester.Service.Cores.Interface
         public Task<ModelResult> Login(LoginDto loginDto);
         public Task<ModelResult> EmailConfirm(string hashedEmail);
         public Task<ModelResult> Refresh(RefreshDto refreshDto);
+        public Task<ModelResult> ResetPassword(string email);
     }
 }

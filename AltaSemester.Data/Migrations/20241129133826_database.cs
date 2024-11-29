@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AltaSemester.Data.Migrations
 {
-    public partial class complete_database : Migration
+    public partial class database : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -105,6 +105,7 @@ namespace AltaSemester.Data.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    HashedEmail = table.Column<string>(type: "text", nullable: true),
                     ExpiredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsEmailConfirmed = table.Column<bool>(type: "boolean", nullable: true),
                     Status = table.Column<bool>(type: "boolean", nullable: true),

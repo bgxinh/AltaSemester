@@ -71,9 +71,41 @@ namespace AltaSemester.Service.Cores
         {
             return password.Equals(userPassword);
         }
-        public Task<ModelResult> EmailConfirm(string hashedEmail)
+        public async Task<ModelResult> EmailConfirm(string hashedEmail)
         {
-            throw new NotImplementedException();
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    if (hashedEmail == null) 
+                    {
+                        _result.IsSuccess = false;
+                        _result.Message = "Missing parameter";
+                        return _result;
+                    }
+                    var user = await _context.Users.Where(x => x.HashedEmail == hashedEmail).FirstOrDefaultAsync();
+                    if (user == null) 
+                    {
+                        _result.IsSuccess = false;
+                        _result.Message = "Email not valid";
+                        return _result;
+                    }
+                    user.IsEmailConfirmed = true;
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    _result.IsSuccess = true;
+                    _result.Message = "Verify success";
+                    return _result;
+                }
+                catch (Exception ex) 
+                {
+                    await transaction.RollbackAsync();
+                    _result.IsSuccess = false;
+                    _result.Message = ex.Message;
+                    return _result;
+                }
+            }
+
         }
 
         public async Task<ModelResult> Login(LoginDto loginDto)
@@ -94,12 +126,12 @@ namespace AltaSemester.Service.Cores
                         _result.Message = "User does not exist";
                         return _result;
                     }
-                    //if (user.IsEmailConfirmed != true)
-                    //{
-                    //    _result.IsSuccess = false;
-                    //    _result.Message = "Active account in mail to login";
-                    //    return _result;
-                    //}
+                    if (user.IsEmailConfirmed != true)
+                    {
+                        _result.IsSuccess = false;
+                        _result.Message = "Active account in mail to login";
+                        return _result;
+                    }
                     string hashPass = Encrypt.EncryptMd5(loginDto.Password);
                     var checkPassword = VerifyPassword(hashPass, user.Password);
                     if (!checkPassword)
@@ -201,9 +233,12 @@ namespace AltaSemester.Service.Cores
                         await _context.Roles.AddAsync(role);
                         await _context.SaveChangesAsync();
                     }
+                    var hashEmail = HashEmail(registerDto.Email);
                     var passwordHashed = Encrypt.EncryptMd5(registerDto.Password);
                     var newUser = _mapper.Map<User>(registerDto);
                     newUser.Password = passwordHashed;
+                    newUser.HashedEmail = hashEmail;
+                    newUser.IsEmailConfirmed = false;
                     await _context.Users.AddAsync(newUser);
                     await _context.SaveChangesAsync();
                     var newUserRole = new UserRole
@@ -211,6 +246,14 @@ namespace AltaSemester.Service.Cores
                         UserId = newUser.Id,
                         RoleId = role.Id
                     };
+                    var sendMail = await _emailService.SendMailActiveAccount(registerDto.Email, hashEmail);
+                    if (!sendMail.IsSuccess)
+                    {
+                        await transaction.RollbackAsync();
+                        _result.IsSuccess = false;
+                        _result.Message = sendMail.Message;
+                        return _result;
+                    }
                     await _context.UserRoles.AddAsync(newUserRole);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -223,6 +266,38 @@ namespace AltaSemester.Service.Cores
                     await transaction.RollbackAsync();
                     _result.IsSuccess = false;
                     _result.Message = $"An error occurred: {ex.Message}";
+                    return _result;
+                }
+            }
+        }
+        public async Task<ModelResult> ResetPassword(string email)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (email == null)
+                    {
+                        _result.IsSuccess &= false;
+                        _result.Message = "Missing Email";
+                        return _result ;
+                    }
+                    var user = await _context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+                    if (user == null) 
+                    {
+                        _result.IsSuccess &= false;
+                        _result.Message = "Email not exits";
+                        return _result ;
+                    }
+                    var result = await _emailService.SendEmailResetPassword(user.Email, user.Password);
+                    _result.IsSuccess = result.IsSuccess;
+                    _result.Message = result.Message;
+                    return _result;
+                }
+                catch(Exception e)
+                {
+                    _result.IsSuccess |= false;
+                    _result.Message = e.Message;
                     return _result;
                 }
             }

@@ -32,7 +32,7 @@ namespace AltaSemester.Service.Cores
                 mail.Subject = "Click link to active account";
                 mail.Body = new TextPart(TextFormat.Html)
                 {
-                    Text = $"Please click the link to activate your account: <a href='{_config["Jwt:Issuer"]}/api/verify/{hashEmail}'>Activate Account</a>"
+                    Text = $"Please click the link to activate your account: <a href='{_config["Jwt:Issuer"]}/api/auth/verify/{hashEmail}'>Activate Account</a>"
                 };
                 using var smtp = new SmtpClient();
                 smtp.Connect(_config["EmailConfig:smtp"], int.Parse(_config["EmailConfig:SmtpPort"]), SecureSocketOptions.StartTls);
@@ -49,6 +49,34 @@ namespace AltaSemester.Service.Cores
                 _result.Message = ex.Message;
                 return _result;
             }
+        }
+        public async Task<ModelResult> SendEmailResetPassword(string email, string password)
+        {
+            try
+            {
+                var mail = new MimeMessage();
+                mail.From.Add(MailboxAddress.Parse(_config["EmailConfig:Email"]));
+                mail.To.Add(MailboxAddress.Parse(email));
+                mail.Subject = "Click link to active account";
+                mail.Body = new TextPart(TextFormat.Html)
+                {
+                    Text = $"Your password account: {password}"
+                };
+                using var smtp = new SmtpClient();
+                smtp.Connect(_config["EmailConfig:smtp"], int.Parse(_config["EmailConfig:SmtpPort"]), SecureSocketOptions.StartTls);
+                smtp.Authenticate(_config["EmailConfig:Email"], _config["EmailConfig:EmailPassword"]);
+                smtp.Send(mail);
+                smtp.Disconnect(true);
+                _result.IsSuccess = true;
+                _result.Message = "Email sent successfully";
+                return _result;
+            }
+            catch (Exception ex) 
+            {
+                _result.IsSuccess = false;
+                _result.Message = ex.Message;
+                return _result;
+            }  
         }
     }
 }

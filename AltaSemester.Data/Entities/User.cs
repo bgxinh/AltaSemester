@@ -1,5 +1,6 @@
 ﻿using AltaSemester.Data.Abstractions.Interface;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +20,7 @@ namespace AltaSemester.Data.Entities
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string? RefreshToken { get; set; }
+        public string? HashedEmail { get; set; }
         public DateTime? ExpiredAt { get; set; }
         public bool? IsEmailConfirmed { get; set; }
         public bool? Status { get; set; }
