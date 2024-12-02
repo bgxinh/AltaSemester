@@ -1,5 +1,4 @@
 ﻿using AltaSemester.Data.Entities;
-using AltaSemester.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,83 +13,29 @@ namespace AltaSemester.Data.DataAccess
     {
         public AltaSemesterContext(DbContextOptions<AltaSemesterContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
-        public DbSet<Entities.Role> Roles { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Device> Devices { get; set; }
-        public DbSet<DeviceService> DevicesServices { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; }
-        public DbSet<ServiceTicket> ServiceTickets { get; set; }
+        public DbSet<Assignment> Assignments { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Định nghĩa quan hệ giữa User và Role
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<Entities.Role>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<UserRole>()
-                .HasKey(x => new {x.UserId, x.RoleId});
-            modelBuilder.Entity<UserRole>()
-                .HasOne(x => x.User)
-                .WithMany(x => x.UserRoles)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<UserRole>()
-                .HasOne(x => x.Role)
-                .WithMany(x => x.UserRoles)
-                .HasForeignKey(x => x.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
-            //Định nghĩa quan hệ giữa Device và Service
             modelBuilder.Entity<Device>()
-                .HasKey(x => x.Id);
+                .HasKey(x => x.DeviceCode);
             modelBuilder.Entity<Service>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<DeviceService>()
-                .HasKey(x => new {x.ServiceId, x.DeviceId});
-            modelBuilder.Entity<DeviceService>()
+                .HasKey(x => x.ServiceCode);
+            modelBuilder.Entity<Assignment>()
+                .HasKey(x => new {x.Code, x.AssignmentDate});
+            modelBuilder.Entity<Assignment>()
                 .HasOne(x => x.Device)
-                .WithMany(x => x.DeviceServices)
-                .HasForeignKey(x => x.DeviceId)
+                .WithMany(x => x.Assignments)
+                .HasForeignKey(x => x.DeviceCode)
                 .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<DeviceService>()
+            modelBuilder.Entity<Assignment>()
                 .HasOne(x => x.Service)
-                .WithMany(x => x.DeviceServices)
-                .HasForeignKey(x => x.ServiceId)
-                .OnDelete(DeleteBehavior.Cascade);
-            //Định nghĩa quan hệ giữa Role và Permission
-            modelBuilder.Entity<Permission>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<RolePermission>()
-                .HasKey(x => new { x.RoleId, x.PermissionId });
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(x => x.Permission)
-                .WithMany(x => x.RolePermissions)
-                .HasForeignKey(x => x.PermissionId)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(x => x.Role)
-                .WithMany(x => x.RolePermissions)
-                .HasForeignKey(x => x.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
-            //Định nghĩa quan hệ giữa user, device, service và serviceTicket
-            modelBuilder.Entity<ServiceTicket>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<ServiceTicket>()
-                .HasOne(x => x.User)
-                .WithMany(x => x.ServiceTickets)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<ServiceTicket>()
-                .HasOne(x => x.Service)
-                .WithMany(x => x.ServiceTickets)
-                .HasForeignKey(x => x.ServiceId)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<ServiceTicket>()
-                .HasOne(x => x.Device)
-                .WithMany(x => x.ServiceTickets)
-                .HasForeignKey(x => x.DeviceId)
+                .WithMany(x => x.Assignments)
+                .HasForeignKey(x => x.ServiceCode)
                 .OnDelete(DeleteBehavior.Cascade);
             //Bảng actitvityLog
             modelBuilder.Entity<ActivityLog>()

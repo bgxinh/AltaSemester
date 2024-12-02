@@ -1,13 +1,10 @@
 using AltaSemester.Data.DataAccess;
-using AltaSemester.Service.Utils.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using AltaSemester.Service.Utils.Auth;
 using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Cores;
-using AltaSemester.Service.Utils.Mapper;
 using AutoMapper;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +15,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -38,9 +34,7 @@ builder.Services.AddDbContext<AltaSemesterContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddScoped<IJwt, Jwt>();
 builder.Services.AddScoped<IAuth, Auth>();
-builder.Services.AddScoped<IEmailService, EmailService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
