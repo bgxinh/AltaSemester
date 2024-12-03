@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using AltaSemester.Service.Utils.Helper;
 using AltaSemester.Data.Entities;
 using AltaSemester.Data.Dtos;
+using AltaJwtTokens;
+using System.Security.Claims;
 namespace AltaSemester.Service.Cores
 {
     public class AuthService : IAuth
@@ -78,7 +80,7 @@ namespace AltaSemester.Service.Cores
                         _result.Message = "Missing username or password";
                         return _result;
                     }
-                    var user = await _context.Users.FindAsync(username);
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
                     if (user == null) 
                     {
                         _result.Success = false;
@@ -93,13 +95,28 @@ namespace AltaSemester.Service.Cores
                         return _result;
                     }
                     //Cấp token
+                    var authClaims = new List<Claim> 
+                    {
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Name, user.FullName ?? user.Username),
+                        new Claim(ClaimTypes.Role, user.UserRole)
+                    };
+                    var jwtSettings = new JwtSettings
+                    {
+                        SecretKey = _configuration["Jwt:Key"],
+                        Issuer = _configuration["Jwt:Issuer"],
+                        Audience = _configuration["Jwt:Audience"],
+                        ExpiryMinutes = 10
+                    };
+                    var jwt = new JwtTokenGenerator(jwtSettings);
+                    var token = jwt.GenerateToken(authClaims);
                     LoginResponse _response = new LoginResponse
                     {
                         Username = user.Username,
                         Fullname = user.FullName,
                         Email = user.Email,
                         Note = user.Note,
-                        Token = "token",
+                        Token = token,
                         RefreshToken = "refresh token",
                         Role = user.UserRole,
                     };
