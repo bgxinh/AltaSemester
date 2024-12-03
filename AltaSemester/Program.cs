@@ -6,8 +6,11 @@ using System.Text;
 using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Cores;
 using AutoMapper;
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.Extensions.DependencyInjection;
+using AltaSemester.Service.Utils.Mapper;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 
@@ -15,6 +18,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -34,7 +38,7 @@ builder.Services.AddDbContext<AltaSemesterContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddScoped<IAuth, Auth>();
+builder.Services.AddScoped<IAuth, AuthService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,11 +47,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
 app.Run();
