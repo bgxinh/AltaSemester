@@ -8,6 +8,7 @@ using AltaSemester.Service.Cores;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using AltaSemester.Service.Utils.Mapper;
+using AltaSemester.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -51,10 +52,9 @@ app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllers();
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllers();
-//});
+app.UseEndpoints(endpoints =>
+{
+    app.MapControllers();
+    endpoints.MapHub<UserActivityHub>("/UserActivityHub");
+});
 app.Run();

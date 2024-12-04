@@ -37,5 +37,11 @@ namespace AltaSemester.Controllers
             _result = await _auth.Refresh(accessToken, refreshToken);
             return Ok(_result);
         }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout (string Username)
+        {
+            _result = await _auth.Logout(Username);
+            return Ok(_result);
+        }
     }
 }

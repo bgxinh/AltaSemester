@@ -136,6 +136,7 @@ namespace AltaSemester.Service.Cores
                         RefreshToken = user.RefreshToken,
                         Role = user.UserRole,
                     };
+                    user.IsActive = true;
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
                     _result.Success = true;
@@ -152,7 +153,20 @@ namespace AltaSemester.Service.Cores
                 }
             }
         }
-
+        public async Task<ModelResult> Logout(string Username)
+        {
+            ModelResult _result = new ModelResult();
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                var user = _context.Users.Where(x => x.Username == Username).FirstOrDefault();
+                user.IsActive = false;
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                _result.Success = true;
+                _result.Message = "Log out success";
+                return _result;
+            }
+        }
         public async Task<ModelResult> Refresh(string accessToken, string refreshToken)
         {
             ModelResult _result = new ModelResult();
