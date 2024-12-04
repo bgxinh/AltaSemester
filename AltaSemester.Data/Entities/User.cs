@@ -21,7 +21,7 @@ namespace AltaSemester.Data.Entities
         public DateTime? ExpiredAt { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? CreateAt { get; set; }
-        public string? UserRole { get; set; } = "Doctor";
+        public string? UserRole { get; set; }
         public string? Note { get; set; }
     }
 }

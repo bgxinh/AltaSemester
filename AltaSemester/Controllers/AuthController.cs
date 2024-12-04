@@ -31,5 +31,11 @@ namespace AltaSemester.Controllers
             _result = await _auth.Registration(registration);
             return Ok(_result);
         }
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh (string accessToken, string refreshToken)
+        {
+            _result = await _auth.Refresh(accessToken, refreshToken);
+            return Ok(_result);
+        }
     }
 }
