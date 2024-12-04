@@ -20,21 +20,15 @@ namespace AltaSemester.Controllers
             _result = new ModelResult();
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login (string username, string password)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            _result = await _auth.Login(username, password);
-            return Ok(_result);
-        }
-        [HttpPost("register")]
-        public async Task<IActionResult> Registraion (Registration registration)
-        {
-            _result = await _auth.Registration(registration);
+            _result = await _auth.Login( loginDto.Username, loginDto.Password);
             return Ok(_result);
         }
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh (string accessToken, string refreshToken)
+        public async Task<IActionResult> Refresh ([FromBody] RefreshDto refresh)
         {
-            _result = await _auth.Refresh(accessToken, refreshToken);
+            _result = await _auth.Refresh(refresh.AccessToken, refresh.RefreshToken);
             return Ok(_result);
         }
         [HttpPost("logout")]

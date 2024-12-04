@@ -44,159 +44,138 @@ namespace AltaSemester.Service.Cores
             var token = jwt.GenerateToken(authClaims);
             return token;
         }
-        public async Task<ModelResult> Registration(Registration registrationDto)
-        {
-            ModelResult _result = new ModelResult();
-            using (var transaction = await _context.Database.BeginTransactionAsync()) 
-            {
-                try
-                {
-                    if (registrationDto == null) 
-                    {
-                        _result.Success = false;
-                        _result.Message = "Missing parameter";
-                        return _result;
-                    }
-                    var checkEmail = await _context.Users.AnyAsync(x => x.Email == registrationDto.Email);
-                    var checkUser = await _context.Users.AnyAsync(x => x.Username == registrationDto.Username);
-                    if (checkEmail || checkUser) 
-                    {
-                        _result.Success = false;
-                        _result.Message = "The email or Username has already been used by another user";
-                        return _result;
-                    }
-                    User user = _mapper.Map<User>(registrationDto);
-                    user.Password = Encrypt.EncryptMd5(registrationDto.Password);
-                    user.UserRole = null;
-                    var result = await _context.Users.AddAsync(user);
-                    if (result == null)
-                    {
-                        _result.Success = false;
-                        _result.Message = "Create user failed";
-                        return _result;
-                    }
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    _result.Success = true;
-                    _result.Message = "Create user success";
-                    return _result;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    _result.Success = false;
-                    _result.Message = ex.Message;
-                    return _result;
-                }
-            }
-        }
         public async Task<ModelResult> Login (string username, string password)
         {
             ModelResult _result = new ModelResult();
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            try
             {
-                try
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                    {
-                        _result.Success = false;
-                        _result.Message = "Missing username or password";
-                        return _result;
-                    }
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-                    if (user == null) 
-                    {
-                        _result.Success = false;
-                        _result.Message = "User does not exits";
-                        return _result;
-                    }
-                    password = Encrypt.EncryptMd5(password);
-                    if (user.Password != password) 
-                    {
-                        _result.Success = false;
-                        _result.Message = "Incorrect password. Please try again";
-                        return _result;
-                    }
-                    //Cấp token
-                    var token = GenerateAccessToken(user);
-                    if(user.RefreshToken == null || user.ExpiredAt > DateTime.UtcNow)
-                    {
-                        var refreshToken = RefreshToken.GenerateRefreshToken();
-                        user.RefreshToken = refreshToken;
-                        user.ExpiredAt = DateTime.UtcNow.AddDays(7);
-                        await _context.SaveChangesAsync();
-                    }
-                    LoginResponse _response = new LoginResponse
-                    {
-                        Username = user.Username,
-                        Fullname = user.FullName,
-                        Email = user.Email,
-                        Note = user.Note,
-                        Token = token,
-                        RefreshToken = user.RefreshToken,
-                        Role = user.UserRole,
-                    };
-                    user.IsActive = true;
+                    _result.Success = false;
+                    _result.Message = "Missing username or password";
+                    return _result;
+                }
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                if (user == null)
+                {
+                    _result.Success = false;
+                    _result.Message = "User does not exits";
+                    return _result;
+                }
+                password = Encrypt.EncryptMd5(password);
+                if (user.Password != password)
+                {
+                    _result.Success = false;
+                    _result.Message = "Incorrect password. Please try again";
+                    return _result;
+                }
+                //Cấp token
+                var token = GenerateAccessToken(user);
+                if (user.RefreshToken == null || user.ExpiredAt > DateTime.UtcNow)
+                {
+                    var refreshToken = RefreshToken.GenerateRefreshToken();
+                    user.RefreshToken = refreshToken;
+                    user.ExpiredAt = DateTime.UtcNow.AddDays(7);
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    _result.Success = true;
-                    _result.Data = _response;
-                    _result.Message = "Login success";
-                    return _result;
                 }
-                catch (Exception ex) 
-                { 
-                    transaction.Rollback();
-                    _result.Success= false;
-                    _result.Message = ex.Message;
-                    return _result;
-                }
+                LoginResponse _response = new LoginResponse
+                {
+                    Username = user.Username,
+                    Fullname = user.FullName,
+                    Email = user.Email,
+                    Note = user.Note,
+                    Token = token,
+                    RefreshToken = user.RefreshToken,
+                    Role = user.UserRole,
+                };
+                user.IsActive = true;
+                await _context.SaveChangesAsync();
+                _result.Success = true;
+                _result.Data = _response;
+                _result.Message = "Login success";
+                return _result;
+            }
+            catch (Exception ex)
+            {
+  
+                _result.Success = false;
+                _result.Message = ex.Message;
+                return _result;
             }
         }
-        public async Task<ModelResult> Logout(string Username)
+        public async Task<ModelResult> Logout(string username)
         {
-            ModelResult _result = new ModelResult();
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            var _result = new ModelResult();
+            try
             {
-                var user = _context.Users.Where(x => x.Username == Username).FirstOrDefault();
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+                if (user == null)
+                {
+                    _result.Success = false;
+                    _result.Message = "User not found.";
+                    return _result;
+                }
                 user.IsActive = false;
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+
                 _result.Success = true;
-                _result.Message = "Log out success";
-                return _result;
+                _result.Message = "Logout successful.";
             }
+            catch (Exception ex)
+            {
+                _result.Success = false;
+                _result.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return _result;
         }
+
         public async Task<ModelResult> Refresh(string accessToken, string refreshToken)
         {
-            ModelResult _result = new ModelResult();
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            var _result = new ModelResult();
+
+            try
             {
-                if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken)) {
-                    _result.Message = "Missing access token or refresh token";
-                    _result.Success = false;
-                    return _result;
-                }
-                var priciple = RefreshToken.GetClaimsPrincipalToken(accessToken, _configuration);
-                if (priciple?.Identity?.Name is null)
+                if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
                 {
-                    _result.Message = "Access token is not valid";
+                    _result.Message = "Missing access token or refresh token.";
                     _result.Success = false;
                     return _result;
                 }
-                var user = await _context.Users.Where(x => x.Username == priciple.Identity.Name).FirstOrDefaultAsync();
-                if (user == null || user?.RefreshToken != refreshToken || user.ExpiredAt > DateTime.UtcNow)
+                var principal = RefreshToken.GetClaimsPrincipalToken(accessToken, _configuration);
+                if (principal?.Identity?.Name is null)
                 {
-                    _result.Message = "Refresh token is expired";
+                    _result.Message = "Access token is not valid.";
                     _result.Success = false;
                     return _result;
                 }
-                var token = GenerateAccessToken(user);
-                _result.Data = user;
+                var user = await _context.Users
+                    .Where(x => x.Username == principal.Identity.Name)
+                    .FirstOrDefaultAsync();
+                if (user == null || !string.Equals(user.RefreshToken, refreshToken) || user.ExpiredAt < DateTime.UtcNow)
+                {
+                    _result.Message = "Refresh token is invalid or expired.";
+                    _result.Success = false;
+                    return _result;
+                }
+                var newAccessToken = GenerateAccessToken(user);
+                await _context.SaveChangesAsync();
+                _result.Data = new RefreshDto
+                {
+                    AccessToken = newAccessToken,
+                    RefreshToken = user.RefreshToken,
+                };
                 _result.Success = true;
-                _result.Message = "Create new token success";
-                return _result;
+                _result.Message = "Create new token success.";
             }
+            catch (Exception ex)
+            {
+                _result.Message = $"An error occurred: {ex.Message}";
+                _result.Success = false;
+            }
+
+            return _result;
         }
+
     }
 }

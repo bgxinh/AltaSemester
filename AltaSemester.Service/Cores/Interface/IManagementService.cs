@@ -11,7 +11,10 @@ namespace AltaSemester.Service.Cores.Interface
 {
     public interface IManagementService
     {
+        public Task<ModelResult> AddNewUser(Registration registration);
         public Task<ModelResult> GetAllUsers();
-        public Task<ModelResult> EditUser(string Username);
+        public Task<ModelResult> EditUser(string token, string username, EditUserDto editUserDto);
+        public Task<ModelResult> GetAssignment();
+        public Task<ModelResult> DoctorGetAssignment(string token);
     }
 }
