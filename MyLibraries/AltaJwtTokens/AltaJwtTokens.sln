@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaJwtTokens", "AltaJwtTokens\AltaJwtTokens.csproj", "{05438EE6-CF23-4870-B8C5-C6E5E852AA41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05438EE6-CF23-4870-B8C5-C6E5E852AA41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05438EE6-CF23-4870-B8C5-C6E5E852AA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05438EE6-CF23-4870-B8C5-C6E5E852AA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05438EE6-CF23-4870-B8C5-C6E5E852AA41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4BF34C25-8FF8-41E5-A0C9-29111032CC76}
+	EndGlobalSection
+EndGlobal

@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSemester", "AltaSemester\AltaSemester.csproj", "{7DAAA534-B422-4979-AD5D-3384D5ED695F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaSemester", "AltaSemester\AltaSemester.csproj", "{7DAAA534-B422-4979-AD5D-3384D5ED695F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSemester.Data", "AltaSemester.Data\AltaSemester.Data.csproj", "{EADF5199-3F82-4134-8D75-32C8F0909D12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaSemester.Data", "AltaSemester.Data\AltaSemester.Data.csproj", "{EADF5199-3F82-4134-8D75-32C8F0909D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSemester.Service", "AltaSemester.Service\AltaSemester.Service.csproj", "{51534426-1DEF-4D1A-AD58-1275A92D3530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaSemester.Service", "AltaSemester.Service\AltaSemester.Service.csproj", "{51534426-1DEF-4D1A-AD58-1275A92D3530}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaJwtTokens", "MyLibraries\AltaJwtTokens\AltaJwtTokens\AltaJwtTokens.csproj", "{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
