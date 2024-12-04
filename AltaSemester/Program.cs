@@ -40,6 +40,9 @@ builder.Services.AddDbContext<AltaSemesterContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IAuth, AuthService>();
+builder.Services.AddScoped<IManagementService, ManagementService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IDevice, DeviceService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

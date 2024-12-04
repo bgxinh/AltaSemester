@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Service.Cores.Interface
 {
-    public class IDevice
+    public interface IDevice
     {
     }
 }
