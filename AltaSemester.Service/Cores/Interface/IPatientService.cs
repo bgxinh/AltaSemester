@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AltaSemester.Data.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace AltaSemester.Service.Cores.Interface
 {
     public interface IPatientService
     {
+        Task<ModelResult> CreateTicketAsync(TicketDto ticketCreateDto);
     }
 }
