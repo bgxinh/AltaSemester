@@ -28,8 +28,6 @@ namespace AltaSemester.Service.Cores
         {
             var currentDate = DateTime.UtcNow.Date;
             var ticketDate = _context.Assignments.Select(t => t.AssignmentDate).FirstOrDefault();
-            Console.WriteLine("currentDate: " + currentDate);
-            Console.WriteLine("ticketDate: " + ticketDate.Date);
             var existingTicket = _context.Assignments
                 .Where(t => t.ServiceCode == serviceCode)
                 .OrderByDescending(t => t.Code)
