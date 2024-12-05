@@ -8,5 +8,6 @@ namespace AltaSemester.Service.Cores.Interface
 {
     public interface IDevice
     {
+
     }
 }

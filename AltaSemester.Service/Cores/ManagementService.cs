@@ -88,6 +88,10 @@ namespace AltaSemester.Service.Cores
 
             try
             {
+                if (token.StartsWith("Bearer "))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 if (principal == null)
                 {
@@ -304,7 +308,7 @@ namespace AltaSemester.Service.Cores
         }
 
         //Lấy ra user trong quản lý user, có phân trang
-        public async Task<ModelResult> GetUserPage(int pageNumber, int pageSize, string role)
+        public async Task<ModelResult> GetUserPage(int pageNumber, int pageSize, string? role)
         {
             var _result = new ModelResult();
             try
@@ -321,7 +325,8 @@ namespace AltaSemester.Service.Cores
                     query = query.Where(x => x.UserRole  == role);
                 }
                 var list = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-                _mapper.Map<List<UserDto>>(list);
+                _result.Data = _mapper.Map<List<UserDto>>(list);
+                _result.Message = "Get user success";
             }
             catch (Exception ex)
             {
@@ -361,6 +366,7 @@ namespace AltaSemester.Service.Cores
             return _result;
         }
 
+        //Thêm user bằng file excel
         public async Task<ModelResult> AddUserFormExcel(FileImportRequest fileImportRequest)
         {
             var _result = new ModelResult();
@@ -412,9 +418,9 @@ namespace AltaSemester.Service.Cores
                                     || processedEmail.Contains(email)
                                     )
                                 {
-                                    processedEmail.Add(email);
                                     continue;
                                 }
+                                processedEmail.Add(email);
                                 var user = new User
                                 {
                                     FullName = worksheet.Cells[row, 2]?.Value?.ToString().Trim(),

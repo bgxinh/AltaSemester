@@ -30,9 +30,9 @@ namespace AltaSemester.Controllers
         }
         [HttpPut("EditUser")]
         [Authorize(Roles ="Staff,Admin,Doctor")]
-        public async Task<IActionResult> EditUser(string token, string username, EditUserDto editUserDto)
+        public async Task<IActionResult> EditUser(string username, EditUserDto editUserDto)
         {
-            _result = await _managementService.EditUser(token, username, editUserDto);
+            _result = await _managementService.EditUser(Request.Headers["Authorization"], username, editUserDto);
             return Ok(_result);
         }
         [HttpGet("GetAssignment")]
@@ -58,7 +58,7 @@ namespace AltaSemester.Controllers
         }
         [HttpGet("GetUserPage")]
         [Authorize(Roles ="Admin,Staff,Doctor")]
-        public async Task<IActionResult> GetUserPage(int pageNumber, int pageSize, string role)
+        public async Task<IActionResult> GetUserPage(int pageNumber, int pageSize, string? role)
         {
             _result = await _managementService.GetUserPage(pageNumber, pageSize, role);
             return Ok(_result);
@@ -84,7 +84,7 @@ namespace AltaSemester.Controllers
             _result = await _managementService.DeleteUser(username);
             return Ok(_result);
         }
-        [HttpPost("{ImportUserExcel}")]
+        [HttpPost("ImportUserExcel")]
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> ImportUserFrpmExcel([FromForm]FileImportRequest fileImportRequest)
         {
