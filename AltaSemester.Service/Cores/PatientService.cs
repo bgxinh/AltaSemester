@@ -54,18 +54,27 @@ namespace AltaSemester.Service.Cores
 
                     Assignment newTicket = _mapper.Map<Assignment>(ticketDto);
                     newTicket.Code = ticketNumber;
+                    newTicket.DeviceCode = "K01";
 
                     await _context.Assignments.AddAsync(newTicket);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
-                    var ticketResponse = _mapper.Map<TicketResponseDto>(newTicket);
+
+                    var ticketResponse = new TicketResponse
+                    {
+                        Code = newTicket.Code,
+                        ServiceName = ticketDto.ServiceName,
+                        CustomerName = newTicket.CustomerName,
+                        AssignmentDate = newTicket.AssignmentDate,
+                        ExpiredDate = newTicket.ExpiredDate
+                    };
                     _result.Success = true;
                     _result.Data = ticketResponse; 
                     return _result;
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    //transaction.Rollback();
                     _result.Success = false;
                     _result.Message = ex.Message;
                     return _result;

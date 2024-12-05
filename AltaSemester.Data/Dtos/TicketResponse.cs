@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Data.Dtos
 {
-    public class TicketResponseDto
+    public class TicketResponse
     {
         public string Code { get; set; }
         public string ServiceName { get; set; }

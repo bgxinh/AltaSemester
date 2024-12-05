@@ -26,7 +26,7 @@ namespace AltaSemester.Service.Utils.Mapper
                 .ForMember(dest => dest.FullName, otp => otp.MapFrom(src =>src.FullName))
                 .ForMember(dest => dest.Password, otp => otp.Ignore());
             CreateMap<TicketDto, Assignment>()
-                .ForMember(dest => dest.Code, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Code, opt => opt.Ignore())
                 .ForMember(dest => dest.AssignmentDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(dest => dest.ExpiredDate, opt => opt.MapFrom(_ => DateTime.UtcNow.Date.AddDays(1)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => (byte)1));
