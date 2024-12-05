@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,81 +80,6 @@ namespace AltaSemester.Service.Cores
 
             return _result;
         }
-
-
-        public async Task<ModelResult> DoctorGetAssignment(string token)
-        {
-            try
-            {
-                if (token.StartsWith("Bearer "))
-                {
-                    token = token.Substring("Bearer ".Length).Trim();
-                }
-                var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
-                var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
-                List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow).ToListAsync();
-                _result.Data = assignments;
-                _result.Success = true;
-                _result.Message = "Get assignment success";
-                return _result;
-
-            }
-            catch (Exception ex) 
-            {
-                _result.Message = ex.Message;
-                _result.Success = false;
-                return _result;
-            }
-        }
-
-
-        public async Task<ModelResult> GetAllUsers()
-        {
-            ModelResult _result = new ModelResult();
-            try
-            {
-                List<UserDto> list = await _context.Users.Select(user => new UserDto
-                {
-                    FullName = user.FullName,
-                    Username = user.Username,
-                    Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    UserRole = user.UserRole,
-                    Note = user.Note,
-                    IsActive = user.IsActive,
-                }).ToListAsync();
-                _result.Success = true;
-                _result.Message = "Get all user success";
-                _result.Data = list;
-                return _result;
-            }
-            catch (Exception ex) 
-            {
-                _result.Message = ex.Message;
-                _result.Success = false;
-                return _result;
-            }
-        }
-
-        public async Task<ModelResult> GetAssignment()
-        {
-            ModelResult _result = new ModelResult();
-            try
-            {
-                var list = await _context.Assignments.ToListAsync();
-                _result.Data = list;
-                _result.Success = true;
-                _result.Message = "Get all assignments successfully";
-            }
-            catch (Exception ex)
-            {
-                _result.Success = false;
-                _result.Message = ex.Message;
-            }
-
-            return _result;
-        }
-
         public async Task<ModelResult> EditUser(string token, string username, EditUserDto editUserDto)
         {
             ModelResult _result = new ModelResult();
@@ -206,6 +132,231 @@ namespace AltaSemester.Service.Cores
 
             return _result;
         }
+        
+        //Lấy ra tất cả user và assignment không phân trang
+        public async Task<ModelResult> GetAllUsers()
+        {
+            ModelResult _result = new ModelResult();
+            try
+            {
+                List<UserDto> list = await _context.Users.Select(user => new UserDto
+                {
+                    FullName = user.FullName,
+                    Username = user.Username,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    UserRole = user.UserRole,
+                    Note = user.Note,
+                    IsActive = user.IsActive,
+                }).ToListAsync();
+                _result.Success = true;
+                _result.Message = "Get all user success";
+                _result.Data = list;
+                return _result;
+            }
+            catch (Exception ex) 
+            {
+                _result.Message = ex.Message;
+                _result.Success = false;
+                return _result;
+            }
+        }
+        public async Task<ModelResult> GetAssignment()
+        {
+            ModelResult _result = new ModelResult();
+            try
+            {
+                var list = await _context.Assignments.ToListAsync();
+                _result.Data = list;
+                _result.Success = true;
+                _result.Message = "Get all assignments successfully";
+            }
+            catch (Exception ex)
+            {
+                _result.Success = false;
+                _result.Message = ex.Message;
+            }
 
+            return _result;
+        }
+        public async Task<ModelResult> DoctorGetAssignment(string token)
+        {
+            try
+            {
+                if (token.StartsWith("Bearer "))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
+                var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
+                var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
+                List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow).ToListAsync();
+                _result.Data = assignments;
+                _result.Success = true;
+                _result.Message = "Get assignment success";
+                return _result;
+
+            }
+            catch (Exception ex)
+            {
+                _result.Message = ex.Message;
+                _result.Success = false;
+                return _result;
+            }
+        }
+
+        //Lấy ra assignment có phân trang, điều kiện lọc cho staff và admin, còn doctor chỉ lấy trong ngày
+
+        public async Task<ModelResult> DoctorGetAssignmentPage(string token, int pageNumber, int pageSize)
+        {
+            try
+            {
+                if (token.StartsWith("Bearer "))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
+                var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
+                var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
+                DateTime startOfDay = DateTime.UtcNow.Date;
+                DateTime endOfDay = startOfDay.AddDays(1);
+                List<Assignment> assignments = await _context.Assignments
+                    .Where(x => x.ServiceCode == doctor.Note
+                                && x.Status == 1
+                                && x.ExpiredDate >= startOfDay
+                                && x.ExpiredDate < endOfDay)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                _result.Data = assignments;
+                _result.Success = true;
+                _result.Message = "Get assignment success";
+                return _result;
+
+            }
+            catch (Exception ex)
+            {
+                _result.Message = ex.Message;
+                _result.Success = false;
+                return _result;
+            }
+        }
+        public async Task<ModelResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto)
+        {
+            ModelResult _result = new ModelResult();
+            try
+            {
+                if (assignmentDto == null)
+                {
+                    _result.Message = "Assignment filter data is required.";
+                    _result.Success = false;
+                    return _result;
+                }
+                if (pageNumber < 1 || pageSize < 1)
+                {
+                    _result.Message = "Page number and page size must be greater than 0.";
+                    _result.Success = false;
+                    return _result;
+                }
+
+                IQueryable<Assignment> query = _context.Assignments.AsQueryable();
+                if (!string.IsNullOrEmpty(assignmentDto.ServiceCode))
+                {
+                    query = query.Where(x => x.ServiceCode == assignmentDto.ServiceCode);
+                }
+
+                if (!string.IsNullOrEmpty(assignmentDto.DeviceCode))
+                {
+                    query = query.Where(x => x.DeviceCode == assignmentDto.DeviceCode);
+                }
+
+                if (assignmentDto.Status != null)
+                {
+                    query = query.Where(x => x.Status == assignmentDto.Status);
+                }
+
+                if (assignmentDto.From != null)
+                {
+                    query = query.Where(x => x.ExpiredDate > assignmentDto.From);
+                }
+
+                if (assignmentDto.To != null)
+                {
+                    query = query.Where(x => x.ExpiredDate < assignmentDto.To);
+                }
+                var assignments = await query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                _result.Data = assignments;
+                _result.Success = true;
+                _result.Message = "Assignments retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                _result.Message = ex.Message;
+                _result.Success = false;
+            }
+
+            return _result;
+        }
+
+        //Lấy ra user trong quản lý user, có phân trang
+        public async Task<ModelResult> GetUserPage(int pageNumber, int pageSize, string role)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                if (pageNumber < 1 || pageSize < 1)
+                {
+                    _result.Success = false;
+                    _result.Message = "Page number and page size must be greater than zero.";
+                    return _result;
+                }
+                IQueryable<User> query = _context.Users.AsQueryable();
+                if(!string.IsNullOrEmpty(role))
+                {
+                    query = query.Where(x => x.UserRole  == role);
+                }
+                var list = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                _mapper.Map<List<UserDto>>(list);
+            }
+            catch (Exception ex)
+            {
+                _result.Success = false;
+                _result.Message = ex.Message;
+            }
+            return _result;
+        }
+
+        public async Task<ModelResult> DeleteUser(string username)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                if (string.IsNullOrEmpty(username))
+                {
+                    _result.Success = false;
+                    _result.Message = "Missing username";
+                }
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+                if(user == null)
+                {
+                    _result.Success = false;
+                    _result.Message = "User dost not exits";
+                    return _result;
+                }
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                _result.Success = true;
+                _result.Message = "Delete user sucess";
+            }
+            catch (Exception ex) 
+            {
+                _result.Success = false;
+                _result.Message = ex.Message;
+            }
+            return _result;
+        }
     }
 }
