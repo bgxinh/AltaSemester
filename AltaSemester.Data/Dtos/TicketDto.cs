@@ -11,6 +11,7 @@ namespace AltaSemester.Data.Dtos
     {
         public string ServiceCode { get; set; }
         public string ServiceName { get; set; }
+        public string DeviceCode { get; set; }
         public string CustomerName { get; set; }
         public string? CustomerEmail { get; set; }
         public string Telephone { get; set; }
