@@ -16,5 +16,9 @@ namespace AltaSemester.Service.Cores.Interface
         public Task<ModelResult> EditUser(string token, string username, EditUserDto editUserDto);
         public Task<ModelResult> GetAssignment();
         public Task<ModelResult> DoctorGetAssignment(string token);
+        public Task<ModelResult> DoctorGetAssignmentPage(string token, int pageNumber, int pageSize);
+        public Task<ModelResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto);
+        public Task<ModelResult> GetUserPage(int pageNumber, int pageSize, string role);
+        public Task<ModelResult> DeleteUser(string username);
     }
 }

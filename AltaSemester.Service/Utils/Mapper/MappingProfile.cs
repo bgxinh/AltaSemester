@@ -25,6 +25,7 @@ namespace AltaSemester.Service.Utils.Mapper
                 .ForMember(dest => dest.UserRole, otp => otp.MapFrom(src =>src.UserRole))
                 .ForMember(dest => dest.FullName, otp => otp.MapFrom(src =>src.FullName))
                 .ForMember(dest => dest.Password, otp => otp.Ignore());
+            CreateMap<User, UserDto>();
         }
     }
 }
