@@ -409,6 +409,7 @@ namespace AltaSemester.Service.Cores
                                 Select(x => new { x.Username, x.Email }).
                                 ToListAsync();
                             var processedEmail = new HashSet<string>();
+                            var processdUsername = new HashSet<string>();
                             for (int row = 2; row <= count; row++) 
                             {
                                 var email = worksheet.Cells[row, 5]?.Value?.ToString().Trim();
@@ -416,11 +417,13 @@ namespace AltaSemester.Service.Cores
                                 if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(username) 
                                     || exisingUsers.Any(x=> x.Username == username || x.Email == email)
                                     || processedEmail.Contains(email)
+                                    || processdUsername.Contains(username)
                                     )
                                 {
                                     continue;
                                 }
                                 processedEmail.Add(email);
+                                processdUsername.Add(username);
                                 var user = new User
                                 {
                                     FullName = worksheet.Cells[row, 2]?.Value?.ToString().Trim(),
