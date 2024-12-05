@@ -84,5 +84,12 @@ namespace AltaSemester.Controllers
             _result = await _managementService.DeleteUser(username);
             return Ok(_result);
         }
+        [HttpPost("{ImportUserExcel}")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> ImportUserFrpmExcel([FromForm]FileImportRequest fileImportRequest)
+        {
+            _result = await _managementService.AddUserFormExcel(fileImportRequest);
+            return Ok(_result);
+        }
     }
 }

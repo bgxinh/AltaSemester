@@ -7,6 +7,8 @@ using AltaSemester.Service.Utils.Jwt;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MimeKit.Encodings;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -355,6 +357,91 @@ namespace AltaSemester.Service.Cores
             {
                 _result.Success = false;
                 _result.Message = ex.Message;
+            }
+            return _result;
+        }
+
+        public async Task<ModelResult> AddUserFormExcel(FileImportRequest fileImportRequest)
+        {
+            var _result = new ModelResult();
+            if (fileImportRequest == null)
+            {
+                _result.Success = false;
+                _result.Message = "Missing file";
+                return _result;
+            }
+            if (!Path.GetExtension(fileImportRequest.formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                _result.Success = false;
+                _result.Message = "Not support this file";
+                return _result;
+            }
+            using (var transaction = await _context.Database.BeginTransactionAsync()) 
+            {
+                using (var stream = new MemoryStream())
+                {
+                    try
+                    {
+                        fileImportRequest.formFile.CopyTo(stream);
+                        if (stream.Length == 0)
+                        {
+                            _result.Success = false;
+                            _result.Message = "Empty file";
+                            return _result;
+                        }
+                        using (var reader = new ExcelPackage(stream)) 
+                        {
+                            if (reader.Workbook.Worksheets.Count == 0)
+                            {
+                                _result.Success = false;
+                                _result.Message = "No worksheets found in the Excel file";
+                                return _result;
+                            }
+                            ExcelWorksheet worksheet = reader.Workbook.Worksheets[0];
+                            var count = worksheet.Dimension.Rows;
+                            var exisingUsers = await _context.Users.
+                                Select(x => new { x.Username, x.Email }).
+                                ToListAsync();
+                            var processedEmail = new HashSet<string>();
+                            for (int row = 2; row <= count; row++) 
+                            {
+                                var email = worksheet.Cells[row, 5]?.Value?.ToString().Trim();
+                                var username = worksheet.Cells[row, 3]?.Value?.ToString().Trim();
+                                if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(username) 
+                                    || exisingUsers.Any(x=> x.Username == username || x.Email == email)
+                                    || processedEmail.Contains(email)
+                                    )
+                                {
+                                    processedEmail.Add(email);
+                                    continue;
+                                }
+                                var user = new User
+                                {
+                                    FullName = worksheet.Cells[row, 2]?.Value?.ToString().Trim(),
+                                    Username = username,
+                                    Password = Encrypt.EncryptMd5(worksheet.Cells[row, 4]?.Value?.ToString().Trim()),
+                                    Email = email,
+                                    UserRole = worksheet.Cells[row, 6]?.Value?.ToString().Trim(),
+                                    PhoneNumber = worksheet.Cells[row, 7]?.Value?.ToString().Trim(),
+                                    Note = worksheet.Cells[row, 8]?.Value?.ToString().Trim(),
+                                    CreateAt = DateTime.UtcNow
+                                };
+                                await _context.AddAsync(user);
+                            }
+                            await _context.SaveChangesAsync();
+                            await transaction.CommitAsync();
+                            _result.Success = true;
+                            _result.Message = "Import user success";
+                        }
+                    }
+                    catch (Exception ex) 
+                    {
+                        transaction.Rollback();
+                        _result.Success = false;
+                        _result.Message = ex.Message;
+                    }
+                }
+
             }
             return _result;
         }
