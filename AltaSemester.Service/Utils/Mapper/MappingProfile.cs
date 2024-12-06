@@ -3,6 +3,7 @@ using AltaSemester.Data.Entities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ namespace AltaSemester.Service.Utils.Mapper
                 .ForMember(dest => dest.Password, otp => otp.Ignore());
             CreateMap<TicketDto, Assignment>()
                 .ForMember(dest => dest.Code, opt => opt.Ignore());
+            CreateMap<DeviceDto, Device>();
         }
     }
 }

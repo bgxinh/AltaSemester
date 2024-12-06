@@ -70,7 +70,7 @@ builder.Services.AddScoped<IManagementService, ManagementService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDevice, DeviceService>();
 var app = builder.Build();
-
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
