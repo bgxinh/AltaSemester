@@ -1,5 +1,6 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Patient;
 using AltaSemester.Data.Entities;
 using AltaSemester.Service.Cores.Interface;
 using AutoMapper;

@@ -1,5 +1,7 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Device;
+using AltaSemester.Data.Dtos.File;
 using AltaSemester.Data.Entities;
 using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Utils.Helper;
@@ -27,7 +29,6 @@ namespace AltaSemester.Service.Cores
         {
             _mapper = mapper;
             _context = context;
-            _result = new ModelResult();
         }
 
         public async Task<ModelResult> AddNewDevice(DeviceDto deviceDto)

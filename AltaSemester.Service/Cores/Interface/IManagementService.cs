@@ -1,5 +1,8 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Auth;
+using AltaSemester.Data.Dtos.File;
+using AltaSemester.Data.Dtos.Manager;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,8 @@
-﻿using AltaSemester.Data.Dtos;
+﻿using AltaSemester.Data.Dtos.Auth;
+using AltaSemester.Data.Dtos.Device;
+using AltaSemester.Data.Dtos.Manager;
+using AltaSemester.Data.Dtos.Patient;
+using AltaSemester.Data.Dtos.Service;
 using AltaSemester.Data.Entities;
 using AutoMapper;
 using System;
@@ -29,6 +33,7 @@ namespace AltaSemester.Service.Utils.Mapper
             CreateMap<TicketDto, Assignment>()
                 .ForMember(dest => dest.Code, opt => opt.Ignore());
             CreateMap<DeviceDto, Device>();
+            CreateMap<ServiceDto, AltaSemester.Data.Entities.Service>();
         }
     }
 }

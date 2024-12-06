@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AltaSemester.Data.Dtos
+namespace AltaSemester.Data.Dtos.Device
 {
     public class DeviceDto
     {

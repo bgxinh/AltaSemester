@@ -1,5 +1,6 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Patient;
 using AltaSemester.Service.Cores;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

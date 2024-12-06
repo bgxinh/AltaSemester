@@ -1,5 +1,8 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Auth;
+using AltaSemester.Data.Dtos.File;
+using AltaSemester.Data.Dtos.Manager;
 using AltaSemester.Data.Entities;
 using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Utils.Helper;
@@ -29,7 +32,6 @@ namespace AltaSemester.Service.Cores
         public ManagementService(AltaSemesterContext context, IMapper mapper, IConfiguration config)
         {
             _context = context;
-            _result = new ModelResult();
             _mapper = mapper;
             _config = config;
         }

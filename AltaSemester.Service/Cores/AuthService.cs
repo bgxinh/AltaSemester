@@ -12,6 +12,7 @@ using AltaSemester.Service.Utils.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using AltaSemester.Data.Dtos.Auth;
 namespace AltaSemester.Service.Cores
 {
     public class AuthService : IAuth

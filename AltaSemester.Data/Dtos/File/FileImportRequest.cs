@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AltaSemester.Data.Dtos
+namespace AltaSemester.Data.Dtos.File
 {
     public class FileImportRequest
     {
-        public IFormFile formFile {  get; set; }
+        public IFormFile formFile { get; set; }
     }
 }

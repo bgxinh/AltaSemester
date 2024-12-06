@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AltaSemester.Data.Dtos
+namespace AltaSemester.Data.Dtos.Auth
 {
     public class LoginResponse
     {
@@ -14,7 +14,7 @@ namespace AltaSemester.Data.Dtos
         public string? Email { get; set; }
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
-        public string? Role {  get; set; }
+        public string? Role { get; set; }
         public string? Note { get; set; }
     }
 }

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AltaSemester.Data.Dtos
+namespace AltaSemester.Data.Dtos.Auth
 {
     public class RefreshDto
     {
         public string AccessToken { get; set; }
-        public string RefreshToken {  get; set; }
+        public string RefreshToken { get; set; }
     }
 }

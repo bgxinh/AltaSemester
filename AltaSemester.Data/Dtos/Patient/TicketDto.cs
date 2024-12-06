@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AltaSemester.Data.Dtos
+namespace AltaSemester.Data.Dtos.Patient
 {
     public class TicketDto
     {
@@ -15,6 +15,6 @@ namespace AltaSemester.Data.Dtos
         public string CustomerName { get; set; }
         public string? CustomerEmail { get; set; }
         public string Telephone { get; set; }
-        
+
     }
 }

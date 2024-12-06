@@ -1,4 +1,6 @@
 ﻿using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Device;
+using AltaSemester.Data.Dtos.File;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -56,7 +58,7 @@ namespace AltaSemester.Controllers
         }
         [HttpPost("ImportDeviceFromExcel")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> ImportDeviceFromExcel(FileImportRequest fileImportRequest)
+        public async Task<IActionResult> ImportDeviceFromExcel([FromForm]FileImportRequest fileImportRequest)
         {
             _result = await _device.ImportDeviceFromExcel(fileImportRequest);
             return Ok(_result);
