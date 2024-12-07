@@ -1,6 +1,7 @@
 ﻿using AltaSemester.Data.Dtos;
 using AltaSemester.Data.Dtos.Device;
 using AltaSemester.Data.Dtos.File;
+using AltaSemester.Data.Dtos.Patient;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +17,12 @@ namespace AltaSemester.Controllers
     {
         private readonly IDevice _device;
         private ModelResult _result;
+        private CountDto _count;
         public DeviceController(IDevice device)
         {
             _device = device;
             _result = new ModelResult();
+            _count = new CountDto();
         }
         [HttpGet("GetDevice")]
         [Authorize(Roles ="Admin,Staff")]
@@ -62,6 +65,13 @@ namespace AltaSemester.Controllers
         {
             _result = await _device.ImportDeviceFromExcel(fileImportRequest);
             return Ok(_result);
+        }
+        [HttpGet("GetCountDevice")]
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> CountDevices()
+        {
+            _count = await _device.CountDevices();
+            return Ok(_count);
         }
     }
 }

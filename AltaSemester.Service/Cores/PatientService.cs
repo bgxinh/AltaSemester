@@ -83,6 +83,15 @@ namespace AltaSemester.Service.Cores
                 _result.Message = ex.Message;
                 return _result;
             }
-        }        
+        }
+        public async Task<CountDto> CountTicket()
+        {
+            CountDto _count = new CountDto
+            {
+                Total = await _context.Assignments.CountAsync(),
+                Active = await _context.Assignments.Where(d => d.Status == 0).CountAsync()
+            };
+            return _count;
+        }
     }
 }

@@ -16,5 +16,6 @@ namespace AltaSemester.Data.Dtos.Auth
         public string? RefreshToken { get; set; }
         public string? Role { get; set; }
         public string? Note { get; set; }
+        public string? Avatar {  get; set; }
     }
 }

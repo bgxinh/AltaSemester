@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using AltaSemester.Data.Dtos.Auth;
+using AltaSemester.Data.Dtos.File;
+using Microsoft.AspNetCore.Hosting;
 namespace AltaSemester.Service.Cores
 {
     public class AuthService : IAuth
@@ -88,6 +90,7 @@ namespace AltaSemester.Service.Cores
                     Token = token,
                     RefreshToken = user.RefreshToken,
                     Role = user.UserRole,
+                    Avatar = user.Avatar,
                 };
                 user.IsActive = true;
                 await _context.SaveChangesAsync();
@@ -177,6 +180,5 @@ namespace AltaSemester.Service.Cores
 
             return _result;
         }
-
     }
 }

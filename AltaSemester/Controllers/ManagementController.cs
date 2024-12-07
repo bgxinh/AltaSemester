@@ -94,5 +94,12 @@ namespace AltaSemester.Controllers
             _result = await _managementService.AddUserFormExcel(fileImportRequest);
             return Ok(_result);
         }
+        [HttpPost("ChangeAvatar")]
+        [Authorize(Roles ="Admin,Staff,Doctor")]
+        public async Task<IActionResult> UpdateAvatar([FromForm]FileImportRequest fileImportRequest)
+        {
+            _result = await _managementService.UpdateAvatar(fileImportRequest, Request.Headers["Authorization"]);
+            return Ok(_result);
+        }
     }
 }

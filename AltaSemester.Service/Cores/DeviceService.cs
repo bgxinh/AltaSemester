@@ -2,6 +2,7 @@
 using AltaSemester.Data.Dtos;
 using AltaSemester.Data.Dtos.Device;
 using AltaSemester.Data.Dtos.File;
+using AltaSemester.Data.Dtos.Patient;
 using AltaSemester.Data.Entities;
 using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Utils.Helper;
@@ -326,6 +327,16 @@ namespace AltaSemester.Service.Cores
 
             }
             return _result;
+        }
+        public async Task<CountDto> CountDevices()
+        {
+            CountDto _count = new CountDto
+            {
+                Total = await _context.Devices.CountAsync(),
+                Active = await _context.Devices.Where(d => d.IsActive == true).CountAsync()
+
+            };
+            return _count;
         }
     }
 }

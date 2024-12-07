@@ -1,4 +1,5 @@
 ﻿using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;

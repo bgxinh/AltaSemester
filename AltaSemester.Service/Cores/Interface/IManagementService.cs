@@ -24,6 +24,7 @@ namespace AltaSemester.Service.Cores.Interface
         public Task<ModelResult> GetUserPage(int pageNumber, int pageSize, string? role);
         public Task<ModelResult> DeleteUser(string username);
         public Task<ModelResult> AddUserFormExcel(FileImportRequest fileImportRequest);
+        public Task<ModelResult> UpdateAvatar(FileImportRequest fileImportRequest, string token);
 
     }
 }

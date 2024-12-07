@@ -1,6 +1,7 @@
 ﻿using AltaSemester.Data.DataAccess;
 using AltaSemester.Data.Dtos;
 using AltaSemester.Data.Dtos.Auth;
+using AltaSemester.Data.Dtos.File;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

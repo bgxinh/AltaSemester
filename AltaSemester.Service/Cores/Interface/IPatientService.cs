@@ -11,5 +11,6 @@ namespace AltaSemester.Service.Cores.Interface
     public interface IPatientService
     {
         Task<ModelResult> CreateTicketAsync(TicketDto ticketCreateDto);
+        public Task<CountDto> CountTicket();
     }
 }

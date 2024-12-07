@@ -8,10 +8,12 @@ using AltaSemester.Service.Cores.Interface;
 using AltaSemester.Service.Utils.Helper;
 using AltaSemester.Service.Utils.Jwt;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MimeKit.Encodings;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +31,13 @@ namespace AltaSemester.Service.Cores
         private ModelResult _result;
         private IMapper _mapper;
         private readonly IConfiguration _config;
-        public ManagementService(AltaSemesterContext context, IMapper mapper, IConfiguration config)
+        private IHostingEnvironment _hostingEnvironment;
+        public ManagementService(AltaSemesterContext context, IMapper mapper, IConfiguration config, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
             _mapper = mapper;
             _config = config;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<ModelResult> AddNewUser(Registration registrationDto)
@@ -454,6 +458,84 @@ namespace AltaSemester.Service.Cores
                 }
 
             }
+            return _result;
+        }
+        public async Task<ModelResult> UpdateAvatar(FileImportRequest fileImportRequest, string token)
+        {
+            var _result = new ModelResult();
+
+            try
+            {
+                if (token.StartsWith("Bearer "))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
+                var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
+                if (principal == null)
+                {
+                    _result.Success = false;
+                    _result.Message = "Invalid token. Please provide a valid authorization token.";
+                    return _result;
+                }
+
+                var role = principal.FindFirst(ClaimTypes.Role)?.Value;
+                var currentUsername = principal.Identity?.Name;
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == currentUsername);
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, "Avatar");
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                if (user.Avatar != null)
+                {
+                    string avatarFileName = Path.GetFileName(new Uri(user.Avatar).AbsolutePath);
+                    string avatarPath = Path.Combine(path, avatarFileName);
+                    File.Delete(avatarPath);
+                }
+
+                var typePicture = fileImportRequest.formFile.FileName.Substring(fileImportRequest.formFile.FileName.LastIndexOf('.') + 1).ToLower();
+                if (typePicture != "jpeg" && typePicture != "png" && typePicture != "jpg")
+                {
+                    _result.Message = "Invalid file type. Only JPG and PNG formats are supported.";
+                    _result.Success = false;
+                    return _result;
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(fileImportRequest.formFile.FileName);
+                var filePath = Path.Combine(path, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await fileImportRequest.formFile.CopyToAsync(fileStream);
+                }
+
+                var avatarUrl = Path.Combine("http://localhost:5000", "Avatar", fileName).Replace("\\", "/");
+                user.Avatar = avatarUrl;
+                await _context.SaveChangesAsync();
+
+                _result.Message = "Avatar uploaded successfully.";
+                _result.Success = true;
+                return _result;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _result.Message = "A concurrency error occurred. The data may have been modified or deleted by another user.";
+                _result.Success = false;
+            }
+            catch (DbUpdateException ex)
+            {
+                _result.Message = "A database error occurred while saving the changes. Please try again.";
+                _result.Success = false;
+            }
+            catch (Exception ex)
+            {
+                _result.Message = $"An error occurred while uploading the avatar: {ex.Message}. Please check your input and try again.";
+                _result.Success = false;
+            }
+
             return _result;
         }
     }

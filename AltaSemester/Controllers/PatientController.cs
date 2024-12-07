@@ -17,11 +17,12 @@ namespace AltaSemester.Controllers
     {
         private readonly IPatientService _patientService;
         private ModelResult _result;
-
+        private CountDto _count;
         public PatientController(IPatientService patientService)
         {
             _patientService = patientService;
             _result = new ModelResult();
+            _count = new CountDto();
         }
         [AllowAnonymous]
         [HttpPost("create-ticket")]
@@ -29,6 +30,13 @@ namespace AltaSemester.Controllers
         {
             _result = await _patientService.CreateTicketAsync(ticketDto);
             return Ok(_result);
+        }
+        [HttpGet("GetCountService")]
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> GetCountService()
+        {
+            _count = await _patientService.CountTicket();
+            return Ok(_count);
         }
     }
 }
