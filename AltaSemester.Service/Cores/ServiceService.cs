@@ -18,6 +18,8 @@ using System.Reflection.Metadata.Ecma335;
 using System.Net.Security;
 using System.Text.RegularExpressions;
 using AutoMapper.QueryableExtensions;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using AltaSemester.Data.Dtos.Patient;
 
 namespace AltaSemester.Service.Cores
 {
@@ -200,6 +202,16 @@ namespace AltaSemester.Service.Cores
         public Task<ModelResult> ImportServiceFromExcel(FileImportRequest fileImportRequest)
         {
             throw new NotImplementedException();
+        }
+        public async Task<CountDto> CountService()
+        {
+            CountDto _count = new CountDto
+            {
+                Total = await _context.Services.CountAsync(),
+                Active = await _context.Services.Where(d => d.Status == true).CountAsync()
+            };
+            return _count;
+
         }
     }
 }
