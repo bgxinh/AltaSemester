@@ -1,5 +1,6 @@
 ﻿using AltaSemester.Data.Dtos;
 using AltaSemester.Data.Dtos.File;
+using AltaSemester.Data.Dtos.Patient;
 using AltaSemester.Data.Dtos.Service;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,10 +18,12 @@ namespace AltaSemester.Controllers
     {
         private readonly IService _service;
         private ModelResult _result;
+        private CountDto _count;
         public ServiceController(IService service)
         {
             _service = service;
             _result = new ModelResult();
+            _count = new CountDto();
         }
         [HttpGet("GetService")]
         [Authorize(Roles ="Admin,Staff")]
@@ -49,6 +52,12 @@ namespace AltaSemester.Controllers
         {
             _result = await _service.DeleteService(serviceCode);
             return Ok(_result);
+        }
+        [HttpGet("GetCountService")]
+        public async Task<IActionResult> GetCountService()
+        {
+            _count = await _service.CountService();
+            return Ok(_count);
         }
         //[HttpPost("ImportExcel")]
         //[Authorize(Roles ="Admin,Staff")]

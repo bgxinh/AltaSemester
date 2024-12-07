@@ -31,9 +31,9 @@ namespace AltaSemester.Controllers
             _result = await _patientService.CreateTicketAsync(ticketDto);
             return Ok(_result);
         }
-        [HttpGet("GetCountService")]
+        [HttpGet("GetCountTicket")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> GetCountService()
+        public async Task<IActionResult> GetCountTicket()
         {
             _count = await _patientService.CountTicket();
             return Ok(_count);
