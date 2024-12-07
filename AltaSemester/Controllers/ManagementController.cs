@@ -36,6 +36,13 @@ namespace AltaSemester.Controllers
         public async Task<IActionResult> EditUser(string username, EditUserDto editUserDto)
         {
             _result = await _managementService.EditUser(Request.Headers["Authorization"], username, editUserDto);
+            if(_result.Success == false)
+            {
+                return new ObjectResult(new { result = _result.Message })
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
+            }
             return Ok(_result);
         }
         [HttpGet("GetAssignment")]
