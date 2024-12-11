@@ -236,6 +236,7 @@ namespace AltaSemester.Service.Cores
                                 && x.Status == 1
                                 && x.ExpiredDate >= startOfDay
                                 && x.ExpiredDate < endOfDay)
+                    .Where(x => x.Status == 0)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
