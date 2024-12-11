@@ -111,17 +111,11 @@ namespace AltaSemester.Service.Cores
             return _result;
         }
 
-        public async Task<ModelResult> EditService(string serviceCode, ServiceDto serviceDto)
+        public async Task<ModelResult> EditService(ServiceDto serviceDto)
         {
             var _result = new ModelResult();
             try
             {
-                if (string.IsNullOrEmpty(serviceCode))
-                {
-                    _result.Message = "Missng service code to edit service";
-                    _result.Success = false;
-                    return _result;
-                }
                 if (serviceDto == null) 
                 {
                     _result.Message = "Missng information";
@@ -138,7 +132,7 @@ namespace AltaSemester.Service.Cores
                     _result.Success = false;
                     return _result;
                 }
-                var device = await _context.Services.Where(x => x.ServiceCode == serviceCode).FirstOrDefaultAsync();
+                var device = await _context.Services.Where(x => x.ServiceCode == serviceDto.ServiceCode).FirstOrDefaultAsync();
                 if (device == null) 
                 {
                     _result.Success = false;
@@ -146,7 +140,6 @@ namespace AltaSemester.Service.Cores
                     return _result;
                 }
                 device.ServiceName = serviceDto.ServiceName;
-                device.ServiceCode = serviceDto.ServiceCode;
                 device.ServiceDescription = serviceDto.ServiceDescription;
                 await _context.SaveChangesAsync();
                 _result.Message = "Edit successfully";

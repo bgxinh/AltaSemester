@@ -2,12 +2,14 @@
 using AltaSemester.Data.Dtos.Auth;
 using AltaSemester.Data.Dtos.File;
 using AltaSemester.Data.Dtos.Manager;
+using AltaSemester.Data.Migrations;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using System.Security.Cryptography.X509Certificates;
 
 namespace AltaSemester.Controllers
@@ -26,16 +28,16 @@ namespace AltaSemester.Controllers
         }
         [HttpPost("AddUser")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddNewUser(Registration registration)
+        public async Task<IActionResult> AddNewUser([FromBody]Registration registration)
         {
             _result = await _managementService.AddNewUser(registration);
             return Ok(_result);
         }
         [HttpPut("EditUser")]
         [Authorize(Roles ="Staff,Admin,Doctor")]
-        public async Task<IActionResult> EditUser(string username, EditUserDto editUserDto)
+        public async Task<IActionResult> EditUser([FromBody]EditUserDto editUserDto)
         {
-            _result = await _managementService.EditUser(Request.Headers["Authorization"], username, editUserDto);
+            _result = await _managementService.EditUser(Request.Headers["Authorization"], editUserDto);
             if(_result.Success == false)
             {
                 return new ObjectResult(new { result = _result.Message })
@@ -66,30 +68,30 @@ namespace AltaSemester.Controllers
             _result = await _managementService.GetAllUsers();
             return Ok(_result);
         }
-        [HttpGet("GetUserPage")]
+        [HttpGet("GetUserPage/{role}/{pageNumber}/{pageSize}")]
         [Authorize(Roles ="Admin,Staff,Doctor")]
         public async Task<IActionResult> GetUserPage(int pageNumber, int pageSize, string? role)
         {
             _result = await _managementService.GetUserPage(pageNumber, pageSize, role);
             return Ok(_result);
         }
-        [HttpGet("GetAssignmentPage")]
+        [HttpGet("GetAssignmentPage/{ServiceCode}/{From}/{To}/{DeviceCode}/{Status}/{pageNumber}/{pageSize}")]
         [Authorize(Roles ="Admin,Staff")]
-        public async Task<IActionResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto)
+        public async Task<IActionResult> GetAssignmentPage(string ServiceCode, string From, string To, string DeviceCode, string Status, int pageNumber,int pageSize)
         {
-            _result = await _managementService.GetAssignmentPage(pageNumber,pageSize, assignmentDto);
+            _result = await _managementService.GetAssignmentPage( ServiceCode,  From,  To,  DeviceCode,  Status,  pageNumber,  pageSize);
             return Ok(_result);
         }
-        [HttpGet("DoctorGetAssignmentPage")]
+        [HttpGet("DoctorGetAssignmentPage/{pageNumber}/{pageSize}")]
         [Authorize(Roles ="Doctor")]
-        public async Task<IActionResult> DoctorGetAssignmentPage(string token, int pageNumber, int pageSize)
+        public async Task<IActionResult> DoctorGetAssignmentPage(int pageNumber, int pageSize)
         {
-            _result = await _managementService.DoctorGetAssignmentPage(token, pageNumber, pageSize);
+            _result = await _managementService.DoctorGetAssignmentPage(Request.Headers["Authorization"], pageNumber, pageSize);
             return Ok(_result);
         }
         [HttpDelete("DeleteUser")]
         [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> DeleteUser(string username)
+        public async Task<IActionResult> DeleteUser([FromBody]string username)
         {
             _result = await _managementService.DeleteUser(username);
             return Ok(_result);
@@ -106,6 +108,13 @@ namespace AltaSemester.Controllers
         public async Task<IActionResult> UpdateAvatar([FromForm]FileImportRequest fileImportRequest)
         {
             _result = await _managementService.UpdateAvatar(fileImportRequest, Request.Headers["Authorization"]);
+            return Ok(_result);
+        }
+        [HttpPut("ChangeStatusAssignment")]
+        [Authorize(Roles ="Doctor")]
+        public async Task<IActionResult> ChangeStatusAssignment([FromBody]string assignmentCode)
+        {
+            _result = await _managementService.ChangStatusAssignment(assignmentCode);
             return Ok(_result);
         }
     }

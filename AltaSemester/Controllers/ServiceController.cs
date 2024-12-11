@@ -25,7 +25,7 @@ namespace AltaSemester.Controllers
             _result = new ModelResult();
             _count = new CountDto();
         }
-        [HttpGet("GetService")]
+        [HttpGet("GetService/{Status}")]
         [Authorize(Roles ="Admin,Staff")]
         public async Task<IActionResult> GetService(bool? Status)
         {
@@ -41,14 +41,14 @@ namespace AltaSemester.Controllers
         }
         [HttpPut("EditService")]
         [Authorize(Roles ="Admin,Staff")]
-        public async Task<IActionResult> EditService(string serviceCode, ServiceDto serviceDto)
+        public async Task<IActionResult> EditService([FromBody]ServiceDto serviceDto)
         {
-            _result = await _service.EditService(serviceCode, serviceDto);
+            _result = await _service.EditService(serviceDto);
             return Ok(_result);
         }
         [HttpDelete("DeleteService")]
         [Authorize(Roles ="Staff,Admin")]
-        public async Task<IActionResult> DeleteService(string serviceCode)
+        public async Task<IActionResult> DeleteService([FromBody]string serviceCode)
         {
             _result = await _service.DeleteService(serviceCode);
             return Ok(_result);
@@ -59,12 +59,5 @@ namespace AltaSemester.Controllers
             _count = await _service.CountService();
             return Ok(_count);
         }
-        //[HttpPost("ImportExcel")]
-        //[Authorize(Roles ="Admin,Staff")]
-        //public async Task<IActionResult> ImportServiceFromExcel([FromBody] FileImportRequest fileImportRequest)
-        //{
-        //    _result = await _service.ImportServiceFromExcel(fileImportRequest);
-        //    return Ok(_result);
-        //}
     }
 }

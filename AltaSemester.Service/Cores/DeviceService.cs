@@ -110,17 +110,11 @@ namespace AltaSemester.Service.Cores
             return _result;
         }
 
-        public async Task<ModelResult> EditDevice(string deviceCode, DeviceDto deviceDto)
+        public async Task<ModelResult> EditDevice(DeviceDto deviceDto)
         {
             var _result = new ModelResult();
             try
             {
-                if (string.IsNullOrEmpty(deviceCode))
-                {
-                    _result.Message = "Device code is required to update the device.";
-                    _result.Success = false;
-                    return _result;
-                }
                 if (deviceDto == null)
                 {
                     _result.Message = "Device information is required to update the device.";
@@ -129,6 +123,7 @@ namespace AltaSemester.Service.Cores
                 }
 
                 var missingFields = new List<string>();
+                if (string.IsNullOrEmpty(deviceDto.DeviceCode)) missingFields.Add(nameof(deviceDto.DeviceCode));
                 if (string.IsNullOrEmpty(deviceDto?.DeviceIP)) missingFields.Add(nameof(deviceDto.DeviceIP));
                 if (string.IsNullOrEmpty(deviceDto?.DeviceUsername)) missingFields.Add(nameof(deviceDto.DeviceUsername));
                 if (string.IsNullOrEmpty(deviceDto?.DevicePassword)) missingFields.Add(nameof(deviceDto.DevicePassword));
@@ -140,22 +135,13 @@ namespace AltaSemester.Service.Cores
                     _result.Success = false;
                     return _result;
                 }
-                var device = await _context.Devices.FirstOrDefaultAsync(x => x.DeviceCode == deviceCode);
+                var device = await _context.Devices.FirstOrDefaultAsync(x => x.DeviceCode == deviceDto.DeviceCode);
                 if (device == null)
                 {
                     _result.Message = "Device does not exist.";
                     _result.Success = false;
                     return _result;
                 }
-
-                if (device.DeviceCode != deviceDto.DeviceCode &&
-                    await _context.Devices.AnyAsync(d => d.DeviceCode == deviceDto.DeviceCode))
-                {
-                    _result.Message = "The new device code is already in use.";
-                    _result.Success = false;
-                    return _result;
-                }
-
                 device.DeviceCode = deviceDto.DeviceCode;
                 device.DeviceIP = deviceDto.DeviceIP;
                 device.DeviceUsername = deviceDto.DeviceUsername;
@@ -204,7 +190,7 @@ namespace AltaSemester.Service.Cores
             return _result;
         }
 
-        public async Task<ModelResult> GetDevicePage(int pageNumber, int pageSize, bool? status, bool? statusConnect)
+        public async Task<ModelResult> GetDevicePage(int pageNumber, int pageSize, string? status, string? statusConnect)
         {
             var result = new ModelResult();
             try
@@ -217,14 +203,14 @@ namespace AltaSemester.Service.Cores
                 }
                 var query = _context.Devices.AsQueryable();
 
-                if (status.HasValue)
+                if (!string.IsNullOrEmpty(status) && status != "___" && bool.TryParse(status, out bool StatusValue))
                 {
-                    query = query.Where(device => device.Status == status.Value);
+                    query = query.Where(device => device.Status == StatusValue);
                 }
 
-                if (statusConnect.HasValue)
+                if (!string.IsNullOrEmpty(statusConnect) && statusConnect != "___" && bool.TryParse(statusConnect, out bool Status))
                 {
-                    query = query.Where(device => device.StatusConnect == statusConnect.Value);
+                    query = query.Where(device => device.StatusConnect == Status);
                 }
                 query = query.OrderByDescending(device => device.Status);
 
@@ -307,7 +293,7 @@ namespace AltaSemester.Service.Cores
                                     DeviceUsername = worksheet.Cells[row, 5]?.Value?.ToString().Trim(),
                                     DevicePassword = Encrypt.EncryptMd5(worksheet.Cells[row, 6]?.Value?.ToString().Trim()),
                                     DeviceIP = worksheet.Cells[row, 7]?.Value?.ToString().Trim(),
-                                    CreateAt = DateTime.UtcNow
+                                    CreateAt = DateTime.UtcNow.AddHours(7)
                                 };
                                 await _context.AddAsync(device);
                             }
@@ -337,6 +323,20 @@ namespace AltaSemester.Service.Cores
 
             };
             return _count;
+        }
+
+        public async Task<ModelResult> LoginDevice(string userName, string password)
+        {
+            var _result = new ModelResult();
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return _result;
         }
     }
 }

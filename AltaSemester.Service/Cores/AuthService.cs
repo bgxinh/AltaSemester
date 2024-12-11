@@ -15,6 +15,9 @@ using System.IdentityModel.Tokens.Jwt;
 using AltaSemester.Data.Dtos.Auth;
 using AltaSemester.Data.Dtos.File;
 using Microsoft.AspNetCore.Hosting;
+using MimeKit.Cryptography;
+using System.Linq.Expressions;
+using AltaSemester.Service.Utils.Mailer;
 namespace AltaSemester.Service.Cores
 {
     public class AuthService : IAuth
@@ -59,6 +62,12 @@ namespace AltaSemester.Service.Cores
                     return _result;
                 }
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                if(user.IsFirstLogin == false)
+                {
+                    _result.Success = false;
+                    _result.Message = "First login, please change your password";
+                    return _result;
+                }
                 if (user == null)
                 {
                     _result.Success = false;
@@ -74,11 +83,11 @@ namespace AltaSemester.Service.Cores
                 }
                 //Cấp token
                 var token = GenerateAccessToken(user);
-                if (user.RefreshToken == null || user.ExpiredAt > DateTime.UtcNow)
+                if (user.RefreshToken == null || user.ExpiredAt > DateTime.UtcNow.AddHours(7))
                 {
                     var refreshToken = RefreshToken.GenerateRefreshToken();
                     user.RefreshToken = refreshToken;
-                    user.ExpiredAt = DateTime.UtcNow.AddDays(7);
+                    user.ExpiredAt = DateTime.UtcNow.AddHours(7).AddDays(7);
                     await _context.SaveChangesAsync();
                 }
                 LoginResponse _response = new LoginResponse
@@ -91,6 +100,7 @@ namespace AltaSemester.Service.Cores
                     RefreshToken = user.RefreshToken,
                     Role = user.UserRole,
                     Avatar = user.Avatar,
+                    IsFirstLogin = user.IsFirstLogin,
                 };
                 user.IsActive = true;
                 await _context.SaveChangesAsync();
@@ -156,7 +166,7 @@ namespace AltaSemester.Service.Cores
                 var user = await _context.Users
                     .Where(x => x.Username == principal.Identity.Name)
                     .FirstOrDefaultAsync();
-                if (user == null || !string.Equals(user.RefreshToken, refreshToken) || user.ExpiredAt < DateTime.UtcNow)
+                if (user == null || !string.Equals(user.RefreshToken, refreshToken) || user.ExpiredAt < DateTime.UtcNow.AddHours(7))
                 {
                     _result.Message = "Refresh token is invalid or expired.";
                     _result.Success = false;
@@ -178,6 +188,107 @@ namespace AltaSemester.Service.Cores
                 _result.Success = false;
             }
 
+            return _result;
+        }
+
+        public async Task<ModelResult> ResetPasswordFirstLogin(ResetPassword resetPassword)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                if (resetPassword == null)
+                {
+                    _result.Message = "Missing parameter";
+                    _result.Success =false;
+                    return _result;
+                }
+                var user = await _context.Users.Where(x => x.Username == resetPassword.Username).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    _result.Message = "User not found";
+                    _result.Success=false;
+                    return _result;
+                }
+                if (user.Password != Encrypt.EncryptMd5(resetPassword.Password))
+                {
+                    _result.Message = "Password not correct";
+                    _result.Success = false;
+                    return _result;
+                }
+                user.Password = Encrypt.EncryptMd5(resetPassword.NewPassword);
+                user.IsFirstLogin = false;
+                await _context.SaveChangesAsync();
+                _result.Message = "Change password success";
+                _result.Success = true;
+            }
+            catch (Exception ex) 
+            {
+                _result.Message = ex.ToString();
+                _result.Success=false;
+            }
+            return _result;
+        }
+
+        public async Task<ModelResult> ResetPassword(ResetPassword resetPassword)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                if (resetPassword == null)
+                {
+                    _result.Message = "Missing parameter";
+                    _result.Success = false;
+                    return _result;
+                }
+                var user = await _context.Users.Where(x => x.Username == resetPassword.Username).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    _result.Message = "User not found";
+                    _result.Success = false;
+                    return _result;
+                }
+                if (user.PasswordReset != resetPassword.Password)
+                {
+                    _result.Message = "Password not correct";
+                    _result.Success = false;
+                    return _result;
+                }
+                user.Password = Encrypt.EncryptMd5(resetPassword.NewPassword);
+                user.PasswordReset = null;
+                await _context.SaveChangesAsync();
+                _result.Message = "Change password success";
+                _result.Success = true;
+            }
+            catch(Exception ex)
+            {
+                _result.Message = ex.ToString();
+                _result.Success=false;
+            }
+            return _result;
+        }
+
+        public async Task<ModelResult> ForgotPassword(string email)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                var user = await _context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+                if (user == null) 
+                {
+                    _result.Message = "Email does not exist";
+                    _result.Success = false;
+                    return _result;
+                }
+                var passwordReset = RefreshToken.GenerateRefreshToken();
+                user.PasswordReset = passwordReset;
+                await _context.SaveChangesAsync();
+                _result = await Mail.SendMailResetPassword(email, passwordReset, _configuration);
+            }
+            catch (Exception ex) 
+            {
+                _result.Message = ex.ToString();
+                _result.Success=false;
+            }
             return _result;
         }
     }
