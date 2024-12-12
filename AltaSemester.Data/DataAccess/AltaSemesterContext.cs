@@ -31,7 +31,7 @@ namespace AltaSemester.Data.DataAccess
                 .HasOne(x => x.Device)
                 .WithMany(x => x.Assignments)
                 .HasForeignKey(x => x.DeviceCode)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // ví dụ các trường hợp on delete setnull
             modelBuilder.Entity<Assignment>()
                 .HasOne(x => x.Service)
                 .WithMany(x => x.Assignments)

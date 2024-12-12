@@ -70,7 +70,9 @@ namespace AltaSemester.Service.Cores
                     _result.Message = "The email or username has already been used by another user";
                     return _result;
                 }
+
                 User user = _mapper.Map<User>(registrationDto);
+
                 user.Password = Encrypt.EncryptMd5(registrationDto.Password);
                 user.UserRole = registrationDto.Role;
 
@@ -193,6 +195,7 @@ namespace AltaSemester.Service.Cores
         }
         public async Task<ModelResult> DoctorGetAssignment(string token)
         {
+            ModelResult _result = new ModelResult();
             try
             {
                 if (token.StartsWith("Bearer "))
@@ -201,6 +204,8 @@ namespace AltaSemester.Service.Cores
                 }
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
+
+
                 List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow).ToListAsync();
                 _result.Data = assignments;
                 _result.Success = true;
@@ -306,7 +311,7 @@ namespace AltaSemester.Service.Cores
             }
             catch (Exception ex)
             {
-                _result.Message = ex.Message;
+                _result.Message = ex.ToString();
                 _result.Success = false;
             }
 

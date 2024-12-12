@@ -12,7 +12,9 @@ using AltaSemester.Hubs;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 
@@ -63,7 +65,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddDbContext<AltaSemesterContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AltaSemester.Data"));
 });
 builder.Services.AddScoped<IAuth, AuthService>();
 builder.Services.AddScoped<IManagementService, ManagementService>();

@@ -27,7 +27,7 @@ namespace AltaSemester.Service.Cores
         }
         private string GenerateTicketNumber(string serviceCode)
         {
-            var currentDate = DateTime.UtcNow.Date;
+            var currentDate = DateTime.UtcNow.AddHours(7).Date;
             var ticketDate = _context.Assignments.Select(t => t.AssignmentDate).FirstOrDefault();
             var existingTicket = _context.Assignments
                 .Where(t => t.ServiceCode == serviceCode)
@@ -58,8 +58,8 @@ namespace AltaSemester.Service.Cores
 
                 Assignment newTicket = _mapper.Map<Assignment>(ticketDto);
                 newTicket.Code = ticketNumber;
-                newTicket.AssignmentDate = DateTime.UtcNow;
-                newTicket.ExpiredDate = DateTime.UtcNow.Date.AddDays(1);
+                newTicket.AssignmentDate = DateTime.UtcNow.AddHours(7);
+                newTicket.ExpiredDate = DateTime.UtcNow.AddHours(7).Date.AddDays(1);
                 newTicket.Status = (byte)1;
 
                 await _context.Assignments.AddAsync(newTicket);

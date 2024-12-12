@@ -33,7 +33,8 @@ namespace AltaSemester.Controllers
         }
         [HttpPut("EditUser")]
         [Authorize(Roles ="Staff,Admin,Doctor")]
-        public async Task<IActionResult> EditUser(string username, EditUserDto editUserDto)
+        // username bỏ trên route
+        public async Task<IActionResult> EditUser(string username,[FromBody]EditUserDto editUserDto) // thêm các attribute, trình bày các attribute phổ biến
         {
             _result = await _managementService.EditUser(Request.Headers["Authorization"], username, editUserDto);
             if(_result.Success == false)
@@ -75,6 +76,9 @@ namespace AltaSemester.Controllers
         }
         [HttpGet("GetAssignmentPage")]
         [Authorize(Roles ="Admin,Staff")]
+        // fix lại
+        // int pageNumber, int pageSize bỏ vô body
+        // những tiêu chí lọc bỏ vô route (bỏ phần GetAssignmentDto assignmentDto)
         public async Task<IActionResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto)
         {
             _result = await _managementService.GetAssignmentPage(pageNumber,pageSize, assignmentDto);

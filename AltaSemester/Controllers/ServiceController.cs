@@ -26,7 +26,7 @@ namespace AltaSemester.Controllers
             _count = new CountDto();
         }
         [HttpGet("GetService")]
-        [Authorize(Roles ="Admin,Staff")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetService(bool? Status)
         {
             _result = await _service.GetService(Status);
