@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AltaSemester.Data.Dtos.Manager
 {
-    public class StatisticmonthDto
+    public class DateRangeDto
     {
-        public string Name {  get; set; }
-        public int Value { get; set; }
+        public int StartDay { get; set; }
+        public int EndDay { get; set; }
     }
 }
