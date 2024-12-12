@@ -62,7 +62,7 @@ namespace AltaSemester.Service.Cores
                     return _result;
                 }
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-                if(user.IsFirstLogin == false)
+                if(user.IsFirstLogin == true)
                 {
                     _result.Success = false;
                     _result.Message = "First login, please change your password";
@@ -102,7 +102,6 @@ namespace AltaSemester.Service.Cores
                     Avatar = user.Avatar,
                     IsFirstLogin = user.IsFirstLogin,
                 };
-                user.IsActive = true;
                 await _context.SaveChangesAsync();
                 _result.Success = true;
                 _result.Data = _response;
