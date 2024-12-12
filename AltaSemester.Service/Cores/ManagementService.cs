@@ -75,6 +75,7 @@ namespace AltaSemester.Service.Cores
 
                 user.Password = Encrypt.EncryptMd5(registrationDto.Password);
                 user.UserRole = registrationDto.Role;
+                user.IsFirstLogin = true;
 
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
@@ -90,7 +91,7 @@ namespace AltaSemester.Service.Cores
 
             return _result;
         }
-        public async Task<ModelResult> EditUser(string token, string username, EditUserDto editUserDto)
+        public async Task<ModelResult> EditUser(string token, EditUserDto editUserDto)
         {
             ModelResult _result = new ModelResult();
 
@@ -111,14 +112,14 @@ namespace AltaSemester.Service.Cores
                 var role = principal.FindFirst(ClaimTypes.Role)?.Value;
                 var currentUsername = principal.Identity?.Name;
 
-                if (role != "Admin" && currentUsername != username)
+                if (role != "Admin" && currentUsername != editUserDto.Username)
                 {
                     _result.Success = false;
                     _result.Message = "You are not authorized to edit other users.";
                     return _result;
                 }
 
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == editUserDto.Username);
                 if (user == null)
                 {
                     _result.Success = false;
@@ -204,8 +205,6 @@ namespace AltaSemester.Service.Cores
                 }
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
-
-
                 List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow).ToListAsync();
                 _result.Data = assignments;
                 _result.Success = true;
@@ -233,13 +232,14 @@ namespace AltaSemester.Service.Cores
                 }
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
-                DateTime startOfDay = DateTime.UtcNow.Date;
+                DateTime startOfDay = DateTime.UtcNow.AddHours(7).Date;
                 DateTime endOfDay = startOfDay.AddDays(1);
                 List<Assignment> assignments = await _context.Assignments
                     .Where(x => x.ServiceCode == doctor.Note
                                 && x.Status == 1
                                 && x.ExpiredDate >= startOfDay
                                 && x.ExpiredDate < endOfDay)
+                    .Where(x => x.Status == 0)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
@@ -257,17 +257,11 @@ namespace AltaSemester.Service.Cores
                 return _result;
             }
         }
-        public async Task<ModelResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto)
+        public async Task<ModelResult> GetAssignmentPage(string ServiceCode, string From, string To, string DeviceCode, string Status, int pageNumber, int pageSize)
         {
             ModelResult _result = new ModelResult();
             try
             {
-                if (assignmentDto == null)
-                {
-                    _result.Message = "Assignment filter data is required.";
-                    _result.Success = false;
-                    return _result;
-                }
                 if (pageNumber < 1 || pageSize < 1)
                 {
                     _result.Message = "Page number and page size must be greater than 0.";
@@ -276,33 +270,35 @@ namespace AltaSemester.Service.Cores
                 }
 
                 IQueryable<Assignment> query = _context.Assignments.AsQueryable();
-                if (!string.IsNullOrEmpty(assignmentDto.ServiceCode))
+                if (!string.IsNullOrEmpty(ServiceCode) && ServiceCode != "___")
                 {
-                    query = query.Where(x => x.ServiceCode == assignmentDto.ServiceCode);
+                    query = query.Where(x => x.ServiceCode == ServiceCode);
                 }
 
-                if (!string.IsNullOrEmpty(assignmentDto.DeviceCode))
+                if (!string.IsNullOrEmpty(DeviceCode) && DeviceCode != "___")
                 {
-                    query = query.Where(x => x.DeviceCode == assignmentDto.DeviceCode);
+                    query = query.Where(x => x.DeviceCode == DeviceCode);
                 }
 
-                if (assignmentDto.Status != null)
+                if (!string.IsNullOrEmpty(Status) && Status != "___" && byte.TryParse(Status, out byte StatusValue))
                 {
-                    query = query.Where(x => x.Status == assignmentDto.Status);
+                    query = query.Where(x => x.Status == StatusValue);
                 }
 
-                if (assignmentDto.From != null)
+                if (!string.IsNullOrEmpty(From) && From != "___" && DateTime.TryParse(From, out DateTime Start))
                 {
-                    query = query.Where(x => x.ExpiredDate > assignmentDto.From);
+                    query = query.Where(x => x.ExpiredDate > Start);
                 }
 
-                if (assignmentDto.To != null)
+                if (!string.IsNullOrEmpty(To) && To != "___" && DateTime.TryParse(To, out DateTime End))
                 {
-                    query = query.Where(x => x.ExpiredDate < assignmentDto.To);
+                    query = query.Where(x => x.ExpiredDate < End);
                 }
+                query = query.Where(x => x.Status == 1);
                 var assignments = await query
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
+                    .OrderBy(x => x.AssignmentDate)
                     .ToListAsync();
 
                 _result.Data = assignments;
@@ -331,7 +327,7 @@ namespace AltaSemester.Service.Cores
                     return _result;
                 }
                 IQueryable<User> query = _context.Users.AsQueryable();
-                if(!string.IsNullOrEmpty(role))
+                if(!string.IsNullOrEmpty(role) && role != "___")
                 {
                     query = query.Where(x => x.UserRole  == role);
                 }
@@ -444,7 +440,8 @@ namespace AltaSemester.Service.Cores
                                     UserRole = worksheet.Cells[row, 6]?.Value?.ToString().Trim(),
                                     PhoneNumber = worksheet.Cells[row, 7]?.Value?.ToString().Trim(),
                                     Note = worksheet.Cells[row, 8]?.Value?.ToString().Trim(),
-                                    CreateAt = DateTime.UtcNow
+                                    CreateAt = DateTime.UtcNow.AddHours(7),
+                                    IsFirstLogin = true
                                 };
                                 await _context.AddAsync(user);
                             }
@@ -541,6 +538,36 @@ namespace AltaSemester.Service.Cores
                 _result.Success = false;
             }
 
+            return _result;
+        }
+
+        public async Task<ModelResult> ChangStatusAssignment(string AssignmentCode)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                var assignments = await _context.Assignments
+                    .Where(x => x.Status == 0)
+                    .OrderBy(x => x.Code)
+                    .ToListAsync();
+                foreach (var assignment in assignments)
+                {
+                    if (assignment.Code == AssignmentCode)
+                    {
+                        assignment.Status = 2;
+                        break;
+                    }
+                    assignment.Status = 1;
+                }
+                await _context.SaveChangesAsync();
+                _result.Success = true;
+                _result.Message = "Change status success";
+            }
+            catch (Exception ex)
+            {
+                _result.Success = false;
+                _result.Message = ex.Message;
+            }
             return _result;
         }
     }

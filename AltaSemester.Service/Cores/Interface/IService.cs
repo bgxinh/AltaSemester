@@ -15,7 +15,7 @@ namespace AltaSemester.Service.Cores.Interface
     public interface IService
     {
         public Task<ModelResult> GetService(bool? Status);
-        public Task<ModelResult> EditService(string serviceCode, ServiceDto serviceDto);
+        public Task<ModelResult> EditService(ServiceDto serviceDto);
         public Task<ModelResult> DeleteService(string serviceCode);
         public Task<ModelResult> AddNewService(ServiceDto serviceDto);
         public Task<ModelResult> ImportServiceFromExcel(FileImportRequest fileImportRequest);

@@ -15,11 +15,28 @@ namespace AltaSemester.Controllers
         {
             _result = result;
         }
-        [HttpGet("{month}")]
-        [Authorize(Roles = "Admin,Staff")]
-        public IActionResult GetStatisticsByMonth(int month)
+        [HttpGet("GetStatisticsByMonth/{month}")]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> GetStatisticsByMonth(int month)
         {
-            var statistics = _result.GetStatisticByMonth(month);
+            var statistics = await _result.GetStatisticByMonth(month);
+
+            return Ok(statistics);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetStatisticsByWeek/{month}")]
+        public async Task<IActionResult> GetStatisticsByWeek(int month)
+        {
+            var statistics = await _result.GetStatisticByWeek(month);
+
+            return Ok(statistics);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetStatisticsByYear")]
+        public async Task<IActionResult> GetStatisticsByYear()
+        {
+            var statistics = await _result.GetStatisticByYear();
 
             return Ok(statistics);
         }

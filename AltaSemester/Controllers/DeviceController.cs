@@ -31,30 +31,30 @@ namespace AltaSemester.Controllers
             _result = await _device.GetAllDevice();
             return Ok(_result);
         }
-        [HttpGet("GetDevicePage")]
+        [HttpGet("GetDevicePage/{pageNumber}/{pageSize}/{Status}/{StatusConnect}")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> GetDevicePage(int pageNumber, int pageSize, bool? Status, bool? StatusConnect)
+        public async Task<IActionResult> GetDevicePage(int pageNumber, int pageSize, string? Status, string? StatusConnect)
         {
             _result = await _device.GetDevicePage(pageNumber, pageSize, Status, StatusConnect);
             return Ok(_result);
         }
         [HttpPut("EditDevice")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> EditDevice(string deviceCode, DeviceDto deviceDto)
+        public async Task<IActionResult> EditDevice([FromBody] DeviceDto deviceDto)
         {
-            _result = await _device.EditDevice(deviceCode, deviceDto);
+            _result = await _device.EditDevice(deviceDto);
             return Ok(_result);
         }
         [HttpDelete("DeleteDevice")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> DeleteDevice(string deviceCode)
+        public async Task<IActionResult> DeleteDevice([FromBody]string deviceCode)
         {
             _result = await _device.DeleteDevice(deviceCode);
             return Ok(_result);
         }
         [HttpPost("AddNewDevice")]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> AddNewDevice(DeviceDto deviceDto)
+        public async Task<IActionResult> AddNewDevice([FromBody]DeviceDto deviceDto)
         {
             _result = await _device.AddNewDevice(deviceDto);
             return Ok(_result);

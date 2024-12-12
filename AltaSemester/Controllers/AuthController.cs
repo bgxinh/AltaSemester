@@ -39,5 +39,23 @@ namespace AltaSemester.Controllers
             _result = await _auth.Logout(Username);
             return Ok(_result);
         }
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody]ResetPassword resetPassword)
+        {
+            _result = await _auth.ResetPassword(resetPassword);
+            return Ok(_result);
+        }
+        [HttpPost("ResetPasswordFirstLogin")]
+        public async Task<IActionResult> ResetPasswordFirstLogin([FromBody]ResetPassword resetPassword)
+        {
+            _result = await _auth.ResetPasswordFirstLogin(resetPassword);
+            return Ok(_result);
+        }
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody]string email)
+        {
+            _result = await _auth.ForgotPassword(email);
+            return Ok(_result);
+        }
     }
 }

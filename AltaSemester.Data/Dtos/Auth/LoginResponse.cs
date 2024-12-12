@@ -17,5 +17,6 @@ namespace AltaSemester.Data.Dtos.Auth
         public string? Role { get; set; }
         public string? Note { get; set; }
         public string? Avatar {  get; set; }
+        public bool? IsFirstLogin { get; set; }
     }
 }

@@ -58,8 +58,8 @@ namespace AltaSemester.Service.Cores
 
                 Assignment newTicket = _mapper.Map<Assignment>(ticketDto);
                 newTicket.Code = ticketNumber;
-                newTicket.AssignmentDate = DateTime.UtcNow.AddHours(7);
-                newTicket.ExpiredDate = DateTime.UtcNow.AddHours(7).Date.AddDays(1);
+                newTicket.AssignmentDate = DateTime.UtcNow;
+                newTicket.ExpiredDate = DateTime.UtcNow.Date.AddDays(1);
                 newTicket.Status = (byte)1;
 
                 await _context.Assignments.AddAsync(newTicket);
@@ -84,12 +84,14 @@ namespace AltaSemester.Service.Cores
                 return _result;
             }
         }
-        public async Task<CountDto> CountTicket()
+        public async Task<TicketStatusDto> CountTicket()
         {
-            CountDto _count = new CountDto
+            TicketStatusDto _count = new TicketStatusDto
             {
                 Total = await _context.Assignments.CountAsync(),
-                Active = await _context.Assignments.Where(d => d.Status == 0).CountAsync()
+                Waiting = await _context.Assignments.Where(d => d.Status == 0).CountAsync(),
+                Skip = await _context.Assignments.Where(d => d.Status == 1).CountAsync(),
+                Used = await _context.Assignments.Where(d => d.Status == 2).CountAsync()
             };
             return _count;
         }

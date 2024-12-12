@@ -9,7 +9,10 @@ namespace AltaSemester.Service.Cores.Interface
 {
     public interface IDashboard
     {
-        public List<int> GetDaysInCurrentMonth(int month, int year);
-        public List<StatisticmonthDto> GetStatisticByMonth(int month);
+        public Task<List<int>> GetDaysInCurrentMonth(int month, int year);
+        public Task<List<DateRangeDto>> GetWeeksInMonth(int month, int year);
+        public Task<List<StatisticmonthDto>> GetStatisticByMonth(int month);
+        public Task<List<StatisticmonthDto>> GetStatisticByWeek(int month);
+        public Task<List<StatisticmonthDto>> GetStatisticByYear();
     }
 }

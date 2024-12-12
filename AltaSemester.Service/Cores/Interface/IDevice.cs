@@ -13,11 +13,12 @@ namespace AltaSemester.Service.Cores.Interface
     public interface IDevice
     {
         public Task<ModelResult> GetAllDevice();
-        public Task<ModelResult> GetDevicePage(int pageNumber, int pageSize, bool? Status, bool? StatusConnect);
-        public Task<ModelResult> EditDevice(string deviceCode, DeviceDto deviceDto);
+        public Task<ModelResult> GetDevicePage(int pageNumber, int pageSize, string? Status, string? StatusConnect);
+        public Task<ModelResult> EditDevice(DeviceDto deviceDto);
         public Task<ModelResult> DeleteDevice(string deviceCode);
         public Task<ModelResult> AddNewDevice(DeviceDto deviceDto);
         public Task<ModelResult> ImportDeviceFromExcel (FileImportRequest fileImportRequest);
+        public Task<ModelResult> LoginDevice(string userName, string password);
         public Task<CountDto> CountDevices();
     }
 }

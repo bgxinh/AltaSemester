@@ -18,6 +18,8 @@ namespace AltaSemester.Data.Entities
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string? Avatar { get; set; }
+        public bool? IsFirstLogin { get; set; }
+        public string? PasswordReset { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? ExpiredAt { get; set; }
         public bool? IsActive { get; set; }

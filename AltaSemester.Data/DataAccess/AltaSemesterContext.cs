@@ -20,7 +20,10 @@ namespace AltaSemester.Data.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasKey(x => x.Id);
+                .HasKey(u => u.Id);
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
             modelBuilder.Entity<Device>()
                 .HasKey(x => x.DeviceCode);
             modelBuilder.Entity<Service>()
