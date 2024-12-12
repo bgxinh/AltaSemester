@@ -84,12 +84,14 @@ namespace AltaSemester.Service.Cores
                 return _result;
             }
         }
-        public async Task<CountDto> CountTicket()
+        public async Task<TicketStatusDto> CountTicket()
         {
-            CountDto _count = new CountDto
+            TicketStatusDto _count = new TicketStatusDto
             {
                 Total = await _context.Assignments.CountAsync(),
-                Active = await _context.Assignments.Where(d => d.Status == 0).CountAsync()
+                Waiting = await _context.Assignments.Where(d => d.Status == 0).CountAsync(),
+                Skip = await _context.Assignments.Where(d => d.Status == 1).CountAsync(),
+                Used = await _context.Assignments.Where(d => d.Status == 2).CountAsync()
             };
             return _count;
         }

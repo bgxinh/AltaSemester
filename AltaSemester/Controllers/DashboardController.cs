@@ -17,12 +17,7 @@ namespace AltaSemester.Controllers
         }
         [HttpGet("GetStatisticsByMonth/{month}")]
         [Authorize(Roles = "Admin")]
-        //public IActionResult GetStatisticsByMonth(int month)
-        //{
-        //    var statistics = _result.GetStatisticByMonth(month);
 
-        //    return Ok(statistics);
-        //}
         public async Task<IActionResult> GetStatisticsByMonth(int month)
         {
             var statistics = await _result.GetStatisticByMonth(month);
