@@ -194,6 +194,7 @@ namespace AltaSemester.Service.Cores
         }
         public async Task<ModelResult> DoctorGetAssignment(string token)
         {
+            var _result = new ModelResult();
             try
             {
                 if (token.StartsWith("Bearer "))
@@ -221,6 +222,7 @@ namespace AltaSemester.Service.Cores
 
         public async Task<ModelResult> DoctorGetAssignmentPage(string token, int pageNumber, int pageSize)
         {
+            var _result = new ModelResult();
             try
             {
                 if (token.StartsWith("Bearer "))
@@ -230,13 +232,13 @@ namespace AltaSemester.Service.Cores
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
                 DateTime startOfDay = DateTime.UtcNow.AddHours(7).Date;
-                DateTime endOfDay = startOfDay.AddDays(1);
+                DateTime endOfDay = startOfDay.AddDays(1).AddHours(7);
                 List<Assignment> assignments = await _context.Assignments
                     .Where(x => x.ServiceCode == doctor.Note
                                 && x.Status == 1
-                                && x.ExpiredDate >= startOfDay
-                                && x.ExpiredDate < endOfDay)
-                    .Where(x => x.Status == 0)
+                                && x.ExpiredDate >= startOfDay && x.ExpiredDate <= endOfDay
+                                )
+                    .OrderBy(x => x.Code)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
@@ -543,29 +545,44 @@ namespace AltaSemester.Service.Cores
             var _result = new ModelResult();
             try
             {
+                DateTime startOfDay = DateTime.UtcNow.AddHours(7).Date;
+                DateTime endOfDay = startOfDay.AddDays(1).AddHours(7);
                 var assignments = await _context.Assignments
-                    .Where(x => x.Status == 0)
-                    .OrderBy(x => x.Code)
-                    .ToListAsync();
+                                    .Where(x => x.Status == 1 && x.ExpiredDate >= startOfDay && x.ExpiredDate <= endOfDay)
+                                    .OrderBy(x => x.Code)
+                                    .ToListAsync();
                 foreach (var assignment in assignments)
                 {
-                    if (assignment.Code == AssignmentCode)
+                    if (!string.IsNullOrEmpty(assignment.Code))
                     {
-                        assignment.Status = 2;
-                        break;
+                        var comparison = string.Compare(assignment.Code.Trim(), AssignmentCode.Trim(), StringComparison.OrdinalIgnoreCase);
+
+                        if (comparison < 0)
+                        {
+                            assignment.Status = 0;
+                        }
+                        else if (comparison == 0)
+                        {
+                            assignment.Status = 2;
+                        }
+                        else
+                        {
+                            assignment.Status = 1;
+                        }
                     }
-                    assignment.Status = 1;
                 }
                 await _context.SaveChangesAsync();
                 _result.Success = true;
-                _result.Message = "Change status success";
+                _result.Message = "Thay đổi trạng thái thành công.";
             }
             catch (Exception ex)
             {
                 _result.Success = false;
-                _result.Message = ex.Message;
+                _result.Message = $"Lỗi: {ex.Message}";
             }
+
             return _result;
         }
+
     }
 }
