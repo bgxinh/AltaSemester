@@ -89,8 +89,8 @@ namespace AltaSemester.Service.Cores
             TicketStatusDto _count = new TicketStatusDto
             {
                 Total = await _context.Assignments.CountAsync(),
-                Waiting = await _context.Assignments.Where(d => d.Status == 0).CountAsync(),
-                Skip = await _context.Assignments.Where(d => d.Status == 1).CountAsync(),
+                Waiting = await _context.Assignments.Where(d => d.Status == 1).CountAsync(),
+                Skip = await _context.Assignments.Where(d => d.Status == 0).CountAsync(),
                 Used = await _context.Assignments.Where(d => d.Status == 2).CountAsync()
             };
             return _count;
