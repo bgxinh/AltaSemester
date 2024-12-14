@@ -74,15 +74,15 @@ namespace AltaSemester.Service.Cores
         {
             var _result = new ModelResult();
             try
-            {
+            { 
                 if (serviceCode == null) 
                 {
                     _result.Message = "Missng service code";
                     _result.Success = false;
                     return _result;
                 }
-                var service = await _context.Services.Where(x => x.ServiceCode == serviceCode).FirstOrDefaultAsync();
-                if (service != null)
+                var service = await _context.Services.Where(x => x.ServiceCode.Trim() == serviceCode.Trim()).FirstOrDefaultAsync();
+                if (service == null)
                 {
                     _result.Success = false;
                     _result.Message = "Service not found";
