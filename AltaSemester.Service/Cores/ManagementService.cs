@@ -293,7 +293,6 @@ namespace AltaSemester.Service.Cores
                 {
                     query = query.Where(x => x.ExpiredDate < End);
                 }
-                query = query.Where(x => x.Status == 1);
                 var assignments = await query
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
