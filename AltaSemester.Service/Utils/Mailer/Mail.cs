@@ -24,7 +24,7 @@ namespace AltaSemester.Service.Utils.Mailer
                 var mail = new MimeMessage();
                 mail.From.Add(MailboxAddress.Parse(_config["EmailConfig:Email"]));
                 mail.To.Add(MailboxAddress.Parse(email));
-                mail.Subject = "Click link to activate account";
+                mail.Subject = "Reset password";
                 var pass = $"{password}";
                 mail.Body = new TextPart(TextFormat.Html)
                 {
