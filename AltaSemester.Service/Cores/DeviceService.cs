@@ -15,6 +15,7 @@ using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +59,9 @@ namespace AltaSemester.Service.Cores
                     return _result;
                 }
                 var device = _mapper.Map<Device>(deviceDto);
+                device.DevicePassword = Encrypt.EncryptMd5(deviceDto.DevicePassword);
+                device.Status = false;
+                device.StatusConnect = false;
                 await _context.Devices.AddAsync(device);
                 await _context.SaveChangesAsync();
 
