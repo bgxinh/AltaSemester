@@ -3,6 +3,7 @@ using AltaSemester.Data.Dtos.Auth;
 using AltaSemester.Data.Dtos.File;
 using AltaSemester.Data.Dtos.Manager;
 using AltaSemester.Data.Migrations;
+using AltaSemester.Service.Cores;
 using AltaSemester.Service.Cores.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -77,9 +78,9 @@ namespace AltaSemester.Controllers
         }
         [HttpGet("GetAssignmentPage/{ServiceCode}/{From}/{To}/{DeviceCode}/{Status}/{pageNumber}/{pageSize}")]
         [Authorize(Roles ="Admin,Staff")]
-        public async Task<IActionResult> GetAssignmentPage(int pageNumber, int pageSize, GetAssignmentDto assignmentDto)
+        public async Task<IActionResult> GetAssignmentPage(string ServiceCode, string From, string To, string DeviceCode, string Status, int pageNumber, int pageSize)
         {
-            _result = await _managementService.GetAssignmentPage( ServiceCode,  From,  To,  DeviceCode,  Status,  pageNumber,  pageSize);
+            _result = await _managementService.GetAssignmentPage(ServiceCode, From, To, DeviceCode, Status, pageNumber, pageSize);
             return Ok(_result);
         }
         [HttpGet("DoctorGetAssignmentPage/{pageNumber}/{pageSize}")]
@@ -110,9 +111,9 @@ namespace AltaSemester.Controllers
             _result = await _managementService.UpdateAvatar(fileImportRequest, Request.Headers["Authorization"]);
             return Ok(_result);
         }
-        [HttpPut("ChangeStatusAssignment")]
+        [HttpPut("ChangeStatusAssignment/{assignmentCode}")]
         [Authorize(Roles ="Doctor")]
-        public async Task<IActionResult> ChangeStatusAssignment([FromBody]string assignmentCode)
+        public async Task<IActionResult> ChangeStatusAssignment(string assignmentCode)
         {
             _result = await _managementService.ChangStatusAssignment(assignmentCode);
             return Ok(_result);

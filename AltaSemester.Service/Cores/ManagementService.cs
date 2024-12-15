@@ -196,11 +196,7 @@ namespace AltaSemester.Service.Cores
         }
         public async Task<ModelResult> DoctorGetAssignment(string token)
         {
-<<<<<<< HEAD
-            ModelResult _result = new ModelResult();
-=======
             var _result = new ModelResult();
->>>>>>> aab86e42522159872fd0005a7514f28b32408299
             try
             {
                 if (token.StartsWith("Bearer "))
@@ -583,11 +579,10 @@ namespace AltaSemester.Service.Cores
             catch (Exception ex)
             {
                 _result.Success = false;
-                _result.Message = $"Lỗi: {ex.Message}";
+                _result.Message = $"Lỗi: {ex.ToString()}";
             }
 
             return _result;
         }
-
     }
 }
