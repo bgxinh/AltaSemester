@@ -70,7 +70,9 @@ namespace AltaSemester.Service.Cores
                     _result.Message = "The email or username has already been used by another user";
                     return _result;
                 }
+
                 User user = _mapper.Map<User>(registrationDto);
+
                 user.Password = Encrypt.EncryptMd5(registrationDto.Password);
                 user.UserRole = registrationDto.Role;
                 user.IsFirstLogin = true;
@@ -203,7 +205,7 @@ namespace AltaSemester.Service.Cores
                 }
                 var principal = RefreshToken.GetClaimsPrincipalToken(token, _config);
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
-                List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow.AddHours(7)).ToListAsync();
+                List<Assignment> assignments = await _context.Assignments.Where(x => x.ServiceCode == doctor.Note && x.ExpiredDate >= DateTime.UtcNow).ToListAsync();
                 _result.Data = assignments;
                 _result.Success = true;
                 _result.Message = "Get assignment success";
@@ -305,7 +307,7 @@ namespace AltaSemester.Service.Cores
             }
             catch (Exception ex)
             {
-                _result.Message = ex.Message;
+                _result.Message = ex.ToString();
                 _result.Success = false;
             }
 
@@ -577,11 +579,10 @@ namespace AltaSemester.Service.Cores
             catch (Exception ex)
             {
                 _result.Success = false;
-                _result.Message = $"Lỗi: {ex.Message}";
+                _result.Message = $"Lỗi: {ex.ToString()}";
             }
 
             return _result;
         }
-
     }
 }
