@@ -1,4 +1,5 @@
 ﻿using AltaSemester.Data.Dtos;
+using AltaSemester.Data.Dtos.Auth;
 using AltaSemester.Data.Dtos.Device;
 using AltaSemester.Data.Dtos.File;
 using AltaSemester.Data.Dtos.Patient;
@@ -72,6 +73,20 @@ namespace AltaSemester.Controllers
         {
             _count = await _device.CountDevices();
             return Ok(_count);
+        }
+        [HttpPost("LoginDevice")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginDevice([FromBody]LoginDto loginDto)
+        {
+            _result = await _device.LoginDevice(loginDto.Username, loginDto.Password);
+            return Ok(_result);
+        }
+        [HttpPost("LogoutDevice")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LogoutDevice(string username)
+        {
+            _result = await _device.LogoutDevice(username);
+            return Ok(_result);
         }
     }
 }

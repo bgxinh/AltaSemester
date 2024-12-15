@@ -25,7 +25,7 @@ namespace AltaSemester.Controllers
             _result = new ModelResult();
             _count = new CountDto();
         }
-        [HttpGet("GetService")]
+        [HttpGet("GetService/{Status}")]
         [Authorize(Roles ="Admin,Staff")]
         public async Task<IActionResult> GetService(bool? Status)
         {
@@ -54,10 +54,18 @@ namespace AltaSemester.Controllers
             return Ok(_result);
         }
         [HttpGet("GetCountService")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCountService()
         {
             _count = await _service.CountService();
             return Ok(_count);
+        }
+        [HttpPost("ChangeStatusService")]
+        [Authorize(Roles ="Admin,Staff")]
+        public async Task<IActionResult> ChangeStatusService([FromBody]string serviceCode)
+        {
+            _result = await _service.ChangeStatusService(serviceCode);
+            return Ok(_result);
         }
     }
 }

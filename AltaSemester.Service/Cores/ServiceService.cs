@@ -206,5 +206,37 @@ namespace AltaSemester.Service.Cores
             return _count;
 
         }
+
+        public async Task<ModelResult> ChangeStatusService(string serviceCode)
+        {
+            var _result = new ModelResult();
+            try
+            {
+                var service = await _context.Services.FirstOrDefaultAsync(x => x.ServiceCode == serviceCode);
+                if (service == null) 
+                {
+                    _result.Message = "Service not found";
+                    _result.Success = false;
+                    return _result;
+                }
+                if (service.Status == true) 
+                {
+                    service.Status = false;
+                }
+                else
+                {
+                    service.Status = false;
+                }
+                await _context.SaveChangesAsync();
+                _result.Message = "Change status success";
+                _result.Success = true;
+            }
+            catch (Exception ex) 
+            {
+                _result.Message = ex.ToString();
+                _result.Success = false;
+            }
+            return _result;
+        }
     }
 }

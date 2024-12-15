@@ -20,5 +20,6 @@ namespace AltaSemester.Service.Cores.Interface
         public Task<ModelResult> AddNewService(ServiceDto serviceDto);
         public Task<ModelResult> ImportServiceFromExcel(FileImportRequest fileImportRequest);
         public Task<CountDto> CountService();
+        public Task<ModelResult> ChangeStatusService(string serviceCode);
     }
 }

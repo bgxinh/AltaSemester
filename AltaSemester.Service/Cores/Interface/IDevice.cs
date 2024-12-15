@@ -20,5 +20,6 @@ namespace AltaSemester.Service.Cores.Interface
         public Task<ModelResult> ImportDeviceFromExcel (FileImportRequest fileImportRequest);
         public Task<ModelResult> LoginDevice(string userName, string password);
         public Task<CountDto> CountDevices();
+        public Task<ModelResult> LogoutDevice(string username);
     }
 }

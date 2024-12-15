@@ -334,11 +334,55 @@ namespace AltaSemester.Service.Cores
             var _result = new ModelResult();
             try
             {
-
+                var device = await _context.Devices.FirstOrDefaultAsync(x => x.DeviceUsername == userName);
+                if (device == null) 
+                {
+                    _result.Success = false;
+                    _result.Message = "Device not found";
+                    return _result;
+                }
+                if (device.DevicePassword != Encrypt.EncryptMd5(password)) 
+                {
+                    _result.Success= false;
+                    _result.Message = "Passsword not correct";
+                    return _result;
+                }
+                device.Status = true;
+                device.StatusConnect = true;
+                await _context.SaveChangesAsync();
+                _result.Message = "Succes";
+                _result.Success = true;
             }
             catch (Exception ex)
+            {   
+                _result.Success = false;
+                _result.Message = ex.ToString();
+            }
+            return _result;
+        }
+        public async Task<ModelResult> LogoutDevice(string username)
+        {
+            var _result = new ModelResult();
+            try
             {
+                var device = await  _context.Devices.FirstOrDefaultAsync(x => x.DeviceUsername == username);
+                if(device == null)
+                {
+                    _result.Success = false;
+                    _result.Message = "Device not found";
+                    return _result;
+                }
+                device.Status = false;
+                device.StatusConnect = false;
+                await _context.SaveChangesAsync();
+                _result.Success = true;
+                _result.Message = "Logout success";
 
+            }
+            catch(Exception ex)
+            {
+                _result.Message = ex.ToString() ;
+                _result.Success = false;
             }
             return _result;
         }
