@@ -14,7 +14,6 @@ WORKDIR /src
 COPY ["AltaSemester/AltaSemester.csproj", "AltaSemester/"]
 COPY ["AltaSemester.Data/AltaSemester.Data.csproj", "AltaSemester.Data/"]
 COPY ["AltaSemester.Service/AltaSemester.Service.csproj", "AltaSemester.Service/"]
-COPY ["MyLibraries/AltaJwtTokens/AltaJwtTokens/AltaJwtTokens.csproj", "MyLibraries/AltaJwtTokens/AltaJwtTokens/"]
 RUN dotnet restore "./AltaSemester/AltaSemester.csproj"
 COPY . .
 WORKDIR "/src/AltaSemester"

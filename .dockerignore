@@ -1,3 +1,4 @@
+﻿# Loại trừ file không cần thiết hoặc chỉ dùng cục bộ
 **/.classpath
 **/.dockerignore
 **/.env
@@ -12,19 +13,25 @@
 **/*.dbmdl
 **/*.jfm
 **/azds.yaml
-**/bin
 **/charts
-**/docker-compose*
-**/Dockerfile*
 **/node_modules
 **/npm-debug.log
-**/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
-LICENSE
-README.md
-!**/.gitignore
+
+# Loại trừ output build
+**/bin
+**/obj
+
+# Cho phép giữ lại file .csproj (phải được copy vào Docker)
+!**/*.csproj
+
+# Cho phép giữ lại file cấu hình Git cần thiết
 !.git/HEAD
 !.git/config
 !.git/packed-refs
 !.git/refs/heads/**
+
+# Loại trừ file không liên quan đến Docker build
+LICENSE
+README.md

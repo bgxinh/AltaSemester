@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaSemester.Data", "AltaSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaSemester.Service", "AltaSemester.Service\AltaSemester.Service.csproj", "{51534426-1DEF-4D1A-AD58-1275A92D3530}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltaJwtTokens", "MyLibraries\AltaJwtTokens\AltaJwtTokens\AltaJwtTokens.csproj", "{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaJwtTokens", "..\AltaJwtTokens\AltaJwtTokens.csproj", "{948C7C24-F671-45AF-9DD7-D129C098B20D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51534426-1DEF-4D1A-AD58-1275A92D3530}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E43FB0A2-87CE-4D6B-93CB-FF9C2CD20923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{948C7C24-F671-45AF-9DD7-D129C098B20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{948C7C24-F671-45AF-9DD7-D129C098B20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{948C7C24-F671-45AF-9DD7-D129C098B20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{948C7C24-F671-45AF-9DD7-D129C098B20D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

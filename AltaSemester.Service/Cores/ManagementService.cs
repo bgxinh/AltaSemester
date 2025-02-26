@@ -152,29 +152,50 @@ namespace AltaSemester.Service.Cores
         public async Task<ModelResult> GetAllUsers()
         {
             ModelResult _result = new ModelResult();
+            string query = @"
+                        SELECT ""FullName"", ""Username"", ""Email"", ""PhoneNumber"", ""UserRole"", ""Note"", ""IsActive""
+                        FROM ""Users""";
             try
             {
-                List<UserDto> list = await _context.Users.Select(user => new UserDto
-                {
-                    FullName = user.FullName,
-                    Username = user.Username,
-                    Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    UserRole = user.UserRole,
-                    Note = user.Note,
-                    IsActive = user.IsActive,
-                }).ToListAsync();
+                //List<UserDto> list = await _context.Users.Select(user => new UserDto
+                //{
+                //    FullName = user.FullName,
+                //    Username = user.Username,
+                //    Email = user.Email,
+                //    PhoneNumber = user.PhoneNumber,
+                //    UserRole = user.UserRole,
+                //    Note = user.Note,
+                //    IsActive = user.IsActive,
+                //}).ToListAsync();
+                //_result.Success = true;
+                //_result.Message = "Get all user success";
+                //_result.Data = list;
+                //return _result;
+                var list = await _context.Users
+                    .FromSqlRaw(query)
+                    .Select(user => new UserDto
+                    {
+                        FullName = user.FullName,
+                        Username = user.Username,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        UserRole = user.UserRole,
+                        Note = user.Note,
+                        IsActive = user.IsActive,
+                    }).ToListAsync();
+
                 _result.Success = true;
                 _result.Message = "Get all user success";
                 _result.Data = list;
-                return _result;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                _result.Message = ex.Message;
                 _result.Success = false;
-                return _result;
+                _result.Message = $"An error occurred: {ex.Message}";
+                _result.Data = null;
             }
+
+            return _result;
         }
         public async Task<ModelResult> GetAssignment()
         {
@@ -235,15 +256,13 @@ namespace AltaSemester.Service.Cores
                 var doctor = await _context.Users.Where(x => x.Username == principal.Identity.Name).FirstOrDefaultAsync();
                 DateTime startOfDay = DateTime.UtcNow.AddHours(7).Date;
                 DateTime endOfDay = startOfDay.AddDays(1).AddHours(7);
-                List<Assignment> assignments = await _context.Assignments
-                    .Where(x => x.ServiceCode == doctor.Note
-                                && x.Status == 1
-                                && x.ExpiredDate >= startOfDay && x.ExpiredDate <= endOfDay
-                                )
-                    .OrderBy(x => x.Code)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                string query = @" SELECT * from ""Assignments""
+                                where ""ServiceCode"" = {0} and ""Status"" = 1 and ""ExpiredDate"" >= {1} and ""ExpiredDate"" <= {2}
+                                order by ""ServiceCode""
+                                offset {3} rows
+                                fetch next {4} rows only;
+                                ";
+                List<Assignment> assignments = await _context.Assignments.FromSqlRaw(query, doctor.Note, startOfDay, endOfDay, (pageNumber-1)*pageSize, pageSize).ToListAsync();
 
                 _result.Data = assignments;
                 _result.Success = true;

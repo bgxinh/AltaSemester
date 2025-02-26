@@ -26,7 +26,6 @@ namespace AltaSemester.Service.Cores
     {
         private IMapper _mapper;
         private AltaSemesterContext _context;
-        private ModelResult _result;
         public DeviceService(IMapper mapper, AltaSemesterContext context)
         {
             _mapper = mapper;
